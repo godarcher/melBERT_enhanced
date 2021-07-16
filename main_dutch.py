@@ -18,6 +18,8 @@ from collections import OrderedDict
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
 from transformers import AutoTokenizer, AutoModel, AdamW, get_linear_schedule_with_warmup
 
+
+#! Imports from other python file of this module
 from utils import Config, Logger, make_log_dir
 from modeling import (
     AutoModelForSequenceClassification,
@@ -37,7 +39,7 @@ ARGS_NAME = "training_args.bin"
 #* SETTINGS #
 #?###########
 
-debug_mode = False 
+print_model = False
 
 #?############
 #* FUNCTIONS #
@@ -55,7 +57,7 @@ def main():
     print("| |\/| |/ -_)| | | _ \| _| |   /  | |   ") 
     print("|_|  |_|\___||_| |___/|___||_|_\  |_|   ") 
 
-    # read configs
+    #* read configuration into config via /utils/Config.py
     config = Config(main_conf_path="./")
 
     # apply system arguments if exist
@@ -70,7 +72,9 @@ def main():
         config.update_params(cmd_arg)
 
     args = config
-    print(args.__dict__)
+
+    if (print_model == True):
+        print(args.__dict__)
 
     # logger
     if "saves" in args.bert_model:
@@ -96,6 +100,8 @@ def main():
                 cmd_arg[arg_name] = arg_value
             config.update_params(cmd_arg)
     else:
+
+        #? Setup logger if this is the first run.
         if not os.path.exists("saves"):
             os.mkdir("saves")
         log_dir = make_log_dir(os.path.join("saves", args.bert_model))
