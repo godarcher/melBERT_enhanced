@@ -40,6 +40,7 @@ ARGS_NAME = "training_args.bin"
 #?###########
 
 print_model = False
+cuda_output = False
 
 #?############
 #* FUNCTIONS #
@@ -109,12 +110,18 @@ def main():
         config.save(log_dir)
     args.log_dir = log_dir
 
-    # set CUDA devices
+    #? set CUDA devices
     device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
     args.n_gpu = torch.cuda.device_count()
     args.device = device
 
-    logger.info("device: {} n_gpu: {}".format(device, args.n_gpu))
+    #* Display user what version we are using
+    if cuda_output == True and torch.cuda.is_available() and not args.no_cuda:
+        print("Using CUDA")
+        logger.info("device: {} n_gpu: {}".format(device, args.n_gpu))
+    elif cuda_output == True:
+        print("USING CPU")
+        logger.info("device: {} n_gpu: {}".format(device, args.n_gpu))
 
     # set seed
     random.seed(args.seed)
