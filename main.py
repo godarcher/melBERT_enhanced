@@ -138,6 +138,7 @@ def main():
     args.num_labels = len(label_list)
 
     #* build tokenizer and model
+    #TODO: CHANGE FOR DUTCH
     tokenizer = AutoTokenizer.from_pretrained(args.bert_model, do_lower_case=args.do_lower_case)
     model = load_pretrained_model(args)
 
