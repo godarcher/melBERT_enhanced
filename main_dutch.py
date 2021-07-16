@@ -123,26 +123,26 @@ def main():
         print("USING CPU")
         logger.info("device: {} n_gpu: {}".format(device, args.n_gpu))
 
-    # set seed
+    #* set seed
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     if args.n_gpu > 0:
         torch.cuda.manual_seed_all(args.seed)
 
-    # get dataset and processor
+    #? get dataset and processor
     task_name = args.task_name.lower()
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
     label_list = processor.get_labels()
     args.num_labels = len(label_list)
 
-    # build tokenizer and model
+    #* build tokenizer and model
     tokenizer = AutoTokenizer.from_pretrained(args.bert_model, do_lower_case=args.do_lower_case)
     model = load_pretrained_model(args)
 
-    ########### Training ###########
-    # VUA-18 / VUA-20
+    #!########## Training ###########
+    #! VUA-18 / VUA-20
     if args.do_train and args.task_name == "vua":
         train_dataloader = load_train_data(
             args, logger, processor, task_name, label_list, tokenizer, output_mode
@@ -159,7 +159,8 @@ def main():
             output_mode,
         )
 
-    # TroFi / MOH-X (K-fold)
+    #! TroFi / MOH-X (K-fold)
+    #? The difference is that this model also holds a k (k_fold)
     elif args.do_train and args.task_name == "trofi":
         k_result = []
         for k in tqdm(range(args.kfold), desc="K-fold"):
