@@ -288,7 +288,7 @@ def run_train(
         logger.info(f"  Batch size = {args.train_batch_size}")
         logger.info(f"  Num steps = { num_train_optimization_steps}")
 
-    # Run training
+    #? Run training
     model.train()
     max_val_f1 = -1
     max_result = {}
@@ -311,7 +311,7 @@ def run_train(
             else:
                 input_ids, input_mask, segment_ids, label_ids = batch
 
-            # compute loss values
+            #* compute loss values
             if args.model_type in ["BERT_SEQ", "BERT_BASE", "MELBERT_SPV"]:
                 logits = model(
                     input_ids,
@@ -334,7 +334,7 @@ def run_train(
                 loss_fct = nn.NLLLoss(weight=torch.Tensor([1, args.class_weight]).to(args.device))
                 loss = loss_fct(logits.view(-1, args.num_labels), label_ids.view(-1))
 
-            # average loss if on multi-gpu.
+            #* average loss if on multi-gpu.
             if args.n_gpu > 1:
                 loss = loss.mean()
 
@@ -352,14 +352,14 @@ def run_train(
         cur_lr = optimizer.param_groups[0]["lr"]
         logger.info(f"[epoch {epoch+1}] ,lr: {cur_lr} ,tr_loss: {tr_loss}")
 
-        # evaluate
+        #? evaluate
         if args.do_eval:
             all_guids, eval_dataloader = load_test_data(
                 args, logger, processor, task_name, label_list, tokenizer, output_mode, k
             )
             result = run_eval(args, logger, model, eval_dataloader, all_guids, task_name)
 
-            # update
+            #? update
             if result["f1"] > max_val_f1:
                 max_val_f1 = result["f1"]
                 max_result = result
@@ -456,7 +456,7 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
     preds = preds[0]
     preds = np.argmax(preds, axis=1)
 
-    # compute metrics
+    #? compute metrics
     result = compute_metrics(preds, out_label_ids)
 
     for key in sorted(result.keys()):
@@ -468,7 +468,7 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
 
 
 def load_pretrained_model(args):
-    # Pretrained Model
+    #? Pretrained Model
     bert = AutoModel.from_pretrained(args.bert_model)
     config = bert.config
     config.type_vocab_size = 4
@@ -499,6 +499,8 @@ def load_pretrained_model(args):
         model = AutoModelForSequenceClassification_MIP(
             args=args, Model=bert, config=config, num_labels=args.num_labels
         )
+
+    #! PROBABLY INTERESTING FOR CONVERSION TO DUTCH
     if args.model_type == "MELBERT":
         model = AutoModelForSequenceClassification_SPV_MIP(
             args=args, Model=bert, config=config, num_labels=args.num_labels
