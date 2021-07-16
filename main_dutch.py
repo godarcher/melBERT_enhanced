@@ -18,7 +18,6 @@ from collections import OrderedDict
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
 from transformers import AutoTokenizer, AutoModel, AdamW, get_linear_schedule_with_warmup
 
-
 #! Imports from other python file of this module
 from utils import Config, Logger, make_log_dir
 from modeling import (
@@ -41,6 +40,7 @@ ARGS_NAME = "training_args.bin"
 
 print_model = False
 cuda_output = False
+training_output = True
 
 #?############
 #* FUNCTIONS #
@@ -190,16 +190,17 @@ def main():
         for k, v in avg_result.items():
             avg_result[k] /= len(k_result)
 
-        logger.info(f"-----Averge Result-----")
+        logger.info(f"-----Average Result-----")
         for key in sorted(avg_result.keys()):
             logger.info(f"  {key} = {str(avg_result[key])}")
 
-    # Load trained model
+    #? Code that runs when loading trained model
     if "saves" in args.bert_model:
         model = load_trained_model(args, model, tokenizer)
 
-    ########### Inference ###########
-    # VUA-18 / VUA-20
+    #!########## Inference ###########
+    #! VUA-18 / VUA-20
+    #? This code runs specific kind of tests, like genre and position
     if (args.do_eval or args.do_test) and task_name == "vua":
         # if test data is genre or POS tag data
         if ("genre" in args.data_dir) or ("pos" in args.data_dir):
@@ -221,7 +222,7 @@ def main():
             )
             run_eval(args, logger, model, eval_dataloader, all_guids, task_name)
 
-    # TroFi / MOH-X (K-fold)
+    #! TroFi / MOH-X (K-fold)
     elif (args.do_eval or args.do_test) and args.task_name == "trofi":
         logger.info(f"***** Evaluating with {args.data_dir}")
         k_result = []
@@ -261,7 +262,7 @@ def run_train(
     tr_loss = 0
     num_train_optimization_steps = len(train_dataloader) * args.num_train_epoch
 
-    # Prepare optimizer, scheduler
+    #? Prepare optimizer, scheduler
     param_optimizer = list(model.named_parameters())
     no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
     optimizer_grouped_parameters = [
@@ -282,9 +283,10 @@ def run_train(
             num_training_steps=num_train_optimization_steps,
         )
 
-    logger.info("***** Running training *****")
-    logger.info(f"  Batch size = {args.train_batch_size}")
-    logger.info(f"  Num steps = { num_train_optimization_steps}")
+    if training_output == True:
+        logger.info("***** Running training *****")
+        logger.info(f"  Batch size = {args.train_batch_size}")
+        logger.info(f"  Num steps = { num_train_optimization_steps}")
 
     # Run training
     model.train()
