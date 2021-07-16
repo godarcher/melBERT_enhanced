@@ -1,3 +1,8 @@
+
+#?##########
+#* IMPORTS #
+#?##########
+
 import os
 import sys
 import pickle
@@ -28,8 +33,28 @@ CONFIG_NAME = "config.json"
 WEIGHTS_NAME = "pytorch_model.bin"
 ARGS_NAME = "training_args.bin"
 
+#?###########
+#* SETTINGS #
+#?###########
+
+debug_mode = False 
+
+#?############
+#* FUNCTIONS #
+#?############
 
 def main():
+
+    #* INFOGRAPHIC OUTPUT
+    print("   *                        (           ")
+    print(" (  `         (    (        )\ )  *   ) ") 
+    print(" )\))(     (  )\ ( )\  (   (()/(` )  /( ") 
+    print("((_)()\   ))\((_))((_) )\   /(_))( )(_))") 
+    print("(_()((_) /((_)_ ((_)_ ((_) (_)) (_(_()) ") 
+    print("|  \/  |(_)) | | | _ )| __|| _ \|_   _| ")
+    print("| |\/| |/ -_)| | | _ \| _| |   /  | |   ") 
+    print("|_|  |_|\___||_| |___/|___||_|_\  |_|   ") 
+
     # read configs
     config = Config(main_conf_path="./")
 
