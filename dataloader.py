@@ -5,6 +5,8 @@ import torch.nn as nn
 
 from sklearn.model_selection import StratifiedKFold
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
+
+#! Feature conversion happens in a seperate .py file
 from run_classifier_dataset_utils import (
     convert_examples_to_two_features,
     convert_examples_to_features,
