@@ -15,18 +15,19 @@ quarantaine isolatie lockdown
 intensive care immuniteit 1.5 meter
 1,5 meter besmettingen
 
-IDEE ACHTER HET ALGORITME
-coronawoord in titel --> 6 punten
-coronawoord in omslag --> 3 punten
-coronawoord --> 1 punt
-bevatten eerste vijf zinnen een coronawoord --> dubbele punten
-dubbele coronawoorden --> dubbele punten
+IDEA BEHIND THE ALGORITHM
+coronaword in title --> 6 punten
+coronaword in bylight --> 3 punten
+coronaword --> 1 punt
+corona words in first 5 setences --> dubble point
+dubble corona words --> dubble points
 """
 
 #*################
 #?IMPORT SETTINGS#
 #*################
 import os
+from pathlib import Path
 
 #*#########
 #?SETTINGS#
@@ -41,8 +42,21 @@ for filename in os.listdir(data_path):
 
     #If filename contains .txt and does not contain the word meta (for seperating metadata)
     if filename.endswith(".txt") and filename.find("meta") == -1:
+        #open file and read contents to string
+        file_path = data_path + "\\" + filename
+        with open(file_path, 'r') as file:
+            #We replace the newlines
+            data = file.read().replace('\n', '')
 
+            #Covid word lists
+            double_cov_words = ["corona", "covid", "ncov"]
+            
+            single_cov_words = ["virus", "quarantaine", "viroloog", "rivm", "vaccin", "astrazeneca",
+                                "pfizer", "moderna", "biontech", "prik", "epidemie", "pandemie",
+                                "quarantaine", "lockdown", "intensive care", "immuniteit", "1.5 meter", "isolatie",
+                                "1,5 meter", "besmettingen"]
 
-        #TODO: OPEN FILENAME
+            #TODO when searching in file, make sure to lower the entire file first
+
     else:
         continue
