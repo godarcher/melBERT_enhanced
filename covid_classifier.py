@@ -51,6 +51,8 @@ for filename in os.listdir(data_path):
         with open(file_path, 'r') as file:
             #We replace the newlines
             data = file.read().replace('\n', '')
+            #make data lowercase for non uppercase sensitive searching
+            data = data.lower()
             #Covid word lists
             double_cov_words = ["corona", "covid", "ncov"]
 
@@ -78,7 +80,6 @@ for filename in os.listdir(data_path):
                     #we add to the score
                     covid_score += count 
 
-            #TODO when searching in file, make sure to lower the entire file first
 
     else:
         continue
