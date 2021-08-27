@@ -44,17 +44,39 @@ for filename in os.listdir(data_path):
     if filename.endswith(".txt") and filename.find("meta") == -1:
         #open file and read contents to string
         file_path = data_path + "\\" + filename
+        #initiate score (and reset)
+        covid_score = 0
+
+        #open the file with read permission
         with open(file_path, 'r') as file:
             #We replace the newlines
             data = file.read().replace('\n', '')
-
             #Covid word lists
             double_cov_words = ["corona", "covid", "ncov"]
-            
+
             single_cov_words = ["virus", "quarantaine", "viroloog", "rivm", "vaccin", "astrazeneca",
                                 "pfizer", "moderna", "biontech", "prik", "epidemie", "pandemie",
                                 "quarantaine", "lockdown", "intensive care", "immuniteit", "1.5 meter", "isolatie",
                                 "1,5 meter", "besmettingen"]
+
+            #actual counting of covid words, for each word in double_cov list
+            for double_word in double_cov_words:
+                #we count the occurences in the text file
+                count = data.count(double_word)
+                #If there is at least one occurence
+                if count != 0:
+                    #we add to the score
+                    count = count * 2
+                    covid_score += count 
+
+            #actual counting of covid words, for each word in single_cov list
+            for single_word in single_cov_words:
+                #we count the occurences in the text file
+                count = data.count(single_word)
+                #If there is at least one occurence
+                if count != 0:
+                    #we add to the score
+                    covid_score += count 
 
             #TODO when searching in file, make sure to lower the entire file first
 
