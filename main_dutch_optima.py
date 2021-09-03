@@ -85,6 +85,8 @@ elif amount_of_info == 3:
 elif amount_of_info == 4:
     logging.set_verbosity_error
 
+bestf1_score = 0
+
 out = open("outputs.txt", "w")
 
 
@@ -232,24 +234,44 @@ def objective_manual(
             tokenizer,
             output_mode,
         )
-        out.write(
-            "RESULT: "
-            + str(best_result)
-            + "hid layer: "
-            + str(hid_layer)
-            + "drop ratio: "
-            + str(drop_ratio)
-            + "lear_rate: "
-            + str(lear_rate)
-            + "num epochs:"
-            + str(num_epochs)
-            + "warmup epochs: "
-            + str(warmup_epochs)
-            + "random seed:"
-            + str(rand_seed)
-            + "ba_size: "
-            + str(ba_size)
-        )
+        if best_result > bestf1_score:
+            out.write(
+                "NEW BEST RESULT: "
+                + str(best_result)
+                + "hid layer: "
+                + str(hid_layer)
+                + "drop ratio: "
+                + str(drop_ratio)
+                + "lear_rate: "
+                + str(lear_rate)
+                + "num epochs:"
+                + str(num_epochs)
+                + "warmup epochs: "
+                + str(warmup_epochs)
+                + "random seed:"
+                + str(rand_seed)
+                + "ba_size: "
+                + str(ba_size)
+            )
+        else:
+            out.write(
+                "WORSE RESULT: "
+                + str(best_result)
+                + "hid layer: "
+                + str(hid_layer)
+                + "drop ratio: "
+                + str(drop_ratio)
+                + "lear_rate: "
+                + str(lear_rate)
+                + "num epochs:"
+                + str(num_epochs)
+                + "warmup epochs: "
+                + str(warmup_epochs)
+                + "random seed:"
+                + str(rand_seed)
+                + "ba_size: "
+                + str(ba_size)
+            )
         return best_result
 
     if best_output == True:
