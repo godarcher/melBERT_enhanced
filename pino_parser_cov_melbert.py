@@ -174,26 +174,11 @@ for directory_d2_first in subdirectories:
 
                                     pos = findpos(childx)
                                     if pos is not "empty":
-
-                                        # ? Get word offset
+                                        # get word
                                         word = childx.get("word")
-                                        word_offset = sentence.rfind(word)
-
-                                        #! Calculate and write output
-                                        output = (
-                                            "COV_fragment01"
-                                            + " "
-                                            + str(sentence_number)
-                                            + "\t"
-                                            + "0"
-                                            + "\t"
-                                            + str(sentence)
-                                            + "\t"
-                                            + pos
-                                            + "\t"
-                                            + str(word_offset)
-                                        )
-                                        f.write(output + "\n")
+                                        index = childx.get("begin")
+                                        # call output function
+                                        writeoutput(pos, word, index)
 
                                 #########
                                 # LEVEL 3#
@@ -206,26 +191,11 @@ for directory_d2_first in subdirectories:
 
                                         pos = findpos(childy)
                                         if pos is not "empty":
-
-                                            # ? Get word offset
+                                            # get word
                                             word = childy.get("word")
-                                            word_offset = sentence.rfind(word)
-
-                                            #! Calculate and write output
-                                            output = (
-                                                "COV_fragment01"
-                                                + " "
-                                                + str(sentence_number)
-                                                + "\t"
-                                                + "0"
-                                                + "\t"
-                                                + str(sentence)
-                                                + "\t"
-                                                + pos
-                                                + "\t"
-                                                + str(word_offset)
-                                            )
-                                            f.write(output + "\n")
+                                            index = childy.get("begin")
+                                            # call output function
+                                            writeoutput(pos, word, index)
 
                                     #########
                                     # LEVEL 4#
@@ -237,26 +207,11 @@ for directory_d2_first in subdirectories:
 
                                             pos = findpos(childz)
                                             if pos is not "empty":
-
-                                                # ? Get word offset
+                                                # get word
                                                 word = childz.get("word")
-                                                word_offset = sentence.rfind(word)
-
-                                                #! Calculate and write output
-                                                output = (
-                                                    "COV_fragment01"
-                                                    + " "
-                                                    + str(sentence_number)
-                                                    + "\t"
-                                                    + "0"
-                                                    + "\t"
-                                                    + str(sentence)
-                                                    + "\t"
-                                                    + pos
-                                                    + "\t"
-                                                    + str(word_offset)
-                                                )
-                                                f.write(output + "\n")
+                                                index = childz.get("begin")
+                                                # call output function
+                                                writeoutput(pos, word, index)
 
                                         #########
                                         # LEVEL 5#
@@ -270,26 +225,11 @@ for directory_d2_first in subdirectories:
 
                                                 pos = findpos(childa)
                                                 if pos is not "empty":
-
-                                                    # ? Get word offset
+                                                    # get word
                                                     word = childa.get("word")
-                                                    word_offset = sentence.rfind(word)
-
-                                                    #! Calculate and write output
-                                                    output = (
-                                                        "COV_fragment01"
-                                                        + " "
-                                                        + str(sentence_number)
-                                                        + "\t"
-                                                        + "0"
-                                                        + "\t"
-                                                        + str(sentence)
-                                                        + "\t"
-                                                        + pos
-                                                        + "\t"
-                                                        + str(word_offset)
-                                                    )
-                                                    f.write(output + "\n")
+                                                    index = childa.get("begin")
+                                                    # call output function
+                                                    writeoutput(pos, word, index)
 
                                             #########
                                             # LEVEL 6#
@@ -303,28 +243,11 @@ for directory_d2_first in subdirectories:
 
                                                     pos = findpos(childb)
                                                     if pos is not "empty":
-
-                                                        # ? Get word offset
+                                                        # get word
                                                         word = childb.get("word")
-                                                        word_offset = sentence.rfind(
-                                                            word
-                                                        )
-
-                                                        #! Calculate and write output
-                                                        output = (
-                                                            "COV_fragment01"
-                                                            + " "
-                                                            + str(sentence_number)
-                                                            + "\t"
-                                                            + "0"
-                                                            + "\t"
-                                                            + str(sentence)
-                                                            + "\t"
-                                                            + pos
-                                                            + "\t"
-                                                            + str(word_offset)
-                                                        )
-                                                        f.write(output + "\n")
+                                                        index = childb.get("begin")
+                                                        # call output function
+                                                        writeoutput(pos, word, index)
 
                                                 #########
                                                 # LEVEL 7#
@@ -341,28 +264,13 @@ for directory_d2_first in subdirectories:
 
                                                         pos = findpos(childc)
                                                         if pos is not "empty":
-
-                                                            # ? Get word offset
+                                                            # get word
                                                             word = childc.get("word")
-                                                            word_offset = (
-                                                                sentence.rfind(word)
+                                                            index = childc.get("begin")
+                                                            # call output function
+                                                            writeoutput(
+                                                                pos, word, index
                                                             )
-
-                                                            #! Calculate and write output
-                                                            output = (
-                                                                "COV_fragment01"
-                                                                + " "
-                                                                + str(sentence_number)
-                                                                + "\t"
-                                                                + "0"
-                                                                + "\t"
-                                                                + str(sentence)
-                                                                + "\t"
-                                                                + pos
-                                                                + "\t"
-                                                                + str(word_offset)
-                                                            )
-                                                            f.write(output + "\n")
 
                                                     ##########
                                                     # LEVEL 8#
@@ -379,32 +287,17 @@ for directory_d2_first in subdirectories:
 
                                                             pos = findpos(childd)
                                                             if pos is not "empty":
-
-                                                                # ? Get word offset
+                                                                # get word
                                                                 word = childd.get(
                                                                     "word"
                                                                 )
-                                                                word_offset = (
-                                                                    sentence.rfind(word)
+                                                                index = childd.get(
+                                                                    "begin"
                                                                 )
-
-                                                                #! Calculate and write output
-                                                                output = (
-                                                                    "COV_fragment01"
-                                                                    + " "
-                                                                    + str(
-                                                                        sentence_number
-                                                                    )
-                                                                    + "\t"
-                                                                    + "0"
-                                                                    + "\t"
-                                                                    + str(sentence)
-                                                                    + "\t"
-                                                                    + pos
-                                                                    + "\t"
-                                                                    + str(word_offset)
+                                                                # call output function
+                                                                writeoutput(
+                                                                    pos, word, index
                                                                 )
-                                                                f.write(output + "\n")
 
                                                         ###########
                                                         # LEVEL 9 #
@@ -421,37 +314,89 @@ for directory_d2_first in subdirectories:
 
                                                                 pos = findpos(childe)
                                                                 if pos is not "empty":
-
-                                                                    # ? Get word offset
+                                                                    # get word
                                                                     word = childe.get(
                                                                         "word"
                                                                     )
-                                                                    word_offset = (
-                                                                        sentence.rfind(
-                                                                            word
-                                                                        )
+                                                                    index = childe.get(
+                                                                        "begin"
+                                                                    )
+                                                                    # call output function
+                                                                    writeoutput(
+                                                                        pos, word, index
                                                                     )
 
-                                                                    #! Calculate and write output
-                                                                    output = (
-                                                                        "COV_fragment01"
-                                                                        + " "
-                                                                        + str(
-                                                                            sentence_number
+                                                            ############
+                                                            # LEVEL 10 #
+                                                            ############
+                                                            for childf in childe:
+                                                                child_of_child = (
+                                                                    childf.get("postag")
+                                                                )
+                                                                if (
+                                                                    not str(
+                                                                        child_of_child
+                                                                    )
+                                                                    == "None"
+                                                                ):  # empty
+
+                                                                    pos = findpos(
+                                                                        childf
+                                                                    )
+                                                                    if (
+                                                                        pos
+                                                                        is not "empty"
+                                                                    ):
+                                                                        # get word
+                                                                        word = (
+                                                                            childf.get(
+                                                                                "word"
+                                                                            )
                                                                         )
-                                                                        + "\t"
-                                                                        + "0"
-                                                                        + "\t"
-                                                                        + str(sentence)
-                                                                        + "\t"
-                                                                        + pos
-                                                                        + "\t"
-                                                                        + str(
-                                                                            word_offset
+                                                                        index = (
+                                                                            childf.get(
+                                                                                "begin"
+                                                                            )
+                                                                        )
+                                                                        # call output function
+                                                                        writeoutput(
+                                                                            pos,
+                                                                            word,
+                                                                            index,
+                                                                        )
+
+                                                                for childg in childf:
+                                                                    child_of_child = (
+                                                                        childg.get(
+                                                                            "postag"
                                                                         )
                                                                     )
-                                                                    f.write(
-                                                                        output + "\n"
-                                                                    )
+                                                                    if (
+                                                                        not str(
+                                                                            child_of_child
+                                                                        )
+                                                                        == "None"
+                                                                    ):  # empty
+
+                                                                        pos = findpos(
+                                                                            childg
+                                                                        )
+                                                                        if (
+                                                                            pos
+                                                                            is not "empty"
+                                                                        ):
+                                                                            # get word
+                                                                            word = childg.get(
+                                                                                "word"
+                                                                            )
+                                                                            index = childg.get(
+                                                                                "begin"
+                                                                            )
+                                                                            # call output function
+                                                                            writeoutput(
+                                                                                pos,
+                                                                                word,
+                                                                                index,
+                                                                            )
 
     f.close()
