@@ -49,7 +49,7 @@ def findpos(child_of_child):
     elif (
         "VNW(" in child_of_child.get("postag")
         and "pron" in child_of_child.get("postag")
-        and child_of_child.get("word").tolower() != "het"
+        and child_of_child.get("word").lower() != "het"
     ):
         pos_tag = "PRON"
 
@@ -143,7 +143,6 @@ for directory_d2_first in subdirectories:
                             if not str(child_of_child) == "None":  # empty
 
                                 pos = findpos(child)
-                                print(pos)
                                 if pos is not "empty":
 
                                     # ? Get word offset
