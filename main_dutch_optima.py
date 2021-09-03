@@ -1,6 +1,6 @@
-#?##########
-#* IMPORTS #
-#?##########
+# ?##########
+# * IMPORTS #
+# ?##########
 
 import os
 import sys
@@ -16,7 +16,15 @@ import optuna
 from tqdm import tqdm, trange
 from collections import OrderedDict
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
-from transformers import AutoTokenizer, AutoModel, AdamW, get_linear_schedule_with_warmup, RobertaTokenizer, RobertaForSequenceClassification, logging
+from transformers import (
+    AutoTokenizer,
+    AutoModel,
+    AdamW,
+    get_linear_schedule_with_warmup,
+    RobertaTokenizer,
+    RobertaForSequenceClassification,
+    logging,
+)
 
 #! Imports from other python file of this module
 from utils import Config, Logger, make_log_dir
@@ -28,7 +36,7 @@ from modeling import (
     AutoModelForSequenceClassification_SPV_MIP,
     AutoModelForSequenceClassification_SPV_MIP_optima,
     AutoModelForSequenceClassification_SPV_MIP_optima_drop,
-    AutoModelForSequenceClassification_SPV_MIP_optima_manual
+    AutoModelForSequenceClassification_SPV_MIP_optima_manual,
 )
 from run_classifier_dataset_utils import processors, output_modes, compute_metrics
 from data_loader import load_train_data, load_train_data_kf, load_test_data
@@ -37,20 +45,20 @@ CONFIG_NAME = "config.json"
 WEIGHTS_NAME = "pytorch_model.bin"
 ARGS_NAME = "training_args.bin"
 
-#?###########
-#* SETTINGS #
-#?###########
+# ?###########
+# * SETTINGS #
+# ?###########
 
 #!warnings and error settings
-amount_of_info = 4 #1 = all information, 2 = errors, warnings, basic info, 3 = error warnings, 4 = errors
+amount_of_info = 4  # 1 = all information, 2 = errors, warnings, basic info, 3 = error warnings, 4 = errors
 
-#?output settings
+# ?output settings
 print_model = False
 cuda_output = False
 training_output = False
 best_output = False
 
-#*hyperparameter optimizer settings
+# *hyperparameter optimizer settings
 optunamode = False
 optuna_trials = 50
 optuna_plot = False
@@ -60,14 +68,14 @@ optuna_tweak_hidden_layers = False
 optuna_tweak_drop_ratio = False
 optuna_tweak_learning_rate = False
 
-#* manual hpo settings
+# * manual hpo settings
 manualmode = True
 
-#?############
-#* main code #
-#?############
+# ?############
+# * main code #
+# ?############
 
-#First interprete the logging settings
+# First interprete the logging settings
 if amount_of_info == 1:
     logging.set_verbosity_debug
 elif amount_of_info == 2:
@@ -79,11 +87,12 @@ elif amount_of_info == 4:
 
 out = open("outputs.txt", "w")
 
+
 def main():
 
     if optunamode == True:
-        #We create an optuna study with as goal to maximize the number we put into it.
-        study = optuna.create_study(direction='maximize')
+        # We create an optuna study with as goal to maximize the number we put into it.
+        study = optuna.create_study(direction="maximize")
         study.optimize(objective, n_trials=optuna_trials)
 
         print("Best trial:")
@@ -96,23 +105,24 @@ def main():
             print("    {}: {}".format(key, value))
     elif manualmode == True:
         objective_manual(768, 0.2, 7.9e-5, 3, 2, 42, 32)
-        #We get the option to manually run certain data 
+        # We get the option to manually run certain data
 
     if optuna_plot == True:
         optuna.visualization.plot_optimization_history(study)
         optuna.visualization.plot_slice(study)
-        optuna.visualization.plot_contour(study, params=['n_estimators', 'max_depth'])
+        optuna.visualization.plot_contour(study, params=["n_estimators", "max_depth"])
 
 
+# ?############
+# * FUNCTIONS #
+# ?############
 
 
-#?############
-#* FUNCTIONS #
-#?############
+def objective_manual(
+    hid_layer, drop_ratio, lear_rate, num_epochs, warmup_epochs, rand_seed, ba_size
+):
 
-def objective_manual(hid_layer, drop_ratio, lear_rate, num_epochs, warmup_epochs, rand_seed, ba_size):
-
-    #* read configuration into config via /utils/Config.py
+    # * read configuration into config via /utils/Config.py
     config = Config(main_conf_path="./")
 
     # apply system arguments if exist
@@ -128,7 +138,7 @@ def objective_manual(hid_layer, drop_ratio, lear_rate, num_epochs, warmup_epochs
 
     args = config
 
-    if (print_model == True):
+    if print_model == True:
         print(args.__dict__)
 
     # logger
@@ -156,7 +166,7 @@ def objective_manual(hid_layer, drop_ratio, lear_rate, num_epochs, warmup_epochs
             config.update_params(cmd_arg)
     else:
 
-        #? Setup logger if this is the first run.
+        # ? Setup logger if this is the first run.
         if not os.path.exists("saves"):
             os.mkdir("saves")
         log_dir = make_log_dir(os.path.join("saves", args.bert_model))
@@ -164,12 +174,14 @@ def objective_manual(hid_layer, drop_ratio, lear_rate, num_epochs, warmup_epochs
         config.save(log_dir)
     args.log_dir = log_dir
 
-    #? set CUDA devices
-    device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+    # ? set CUDA devices
+    device = torch.device(
+        "cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu"
+    )
     args.n_gpu = torch.cuda.device_count()
     args.device = device
 
-    #* Display user what version we are using
+    # * Display user what version we are using
     if cuda_output == True and torch.cuda.is_available() and not args.no_cuda:
         print("Using CUDA")
         logger.info("device: {} n_gpu: {}".format(device, args.n_gpu))
@@ -177,25 +189,27 @@ def objective_manual(hid_layer, drop_ratio, lear_rate, num_epochs, warmup_epochs
         print("USING CPU")
         logger.info("device: {} n_gpu: {}".format(device, args.n_gpu))
 
-    #* SEED TWEEKING
+    # * SEED TWEEKING
     random.seed(rand_seed)
     np.random.seed(rand_seed)
     torch.manual_seed(rand_seed)
     if args.n_gpu > 0:
         torch.cuda.manual_seed_all(rand_seed)
 
-    #? get dataset and processor
+    # ? get dataset and processor
     task_name = args.task_name.lower()
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
     label_list = processor.get_labels()
     args.num_labels = len(label_list)
-    
+
     #######
-    #DUTCH#
+    # DUTCH#
     #######
-    #* build tokenizer and model
-    tokenizer = RobertaTokenizer.from_pretrained("pdelobelle/robbert-v2-dutch-base", do_lower_case=args.do_lower_case)
+    # * build tokenizer and model
+    tokenizer = RobertaTokenizer.from_pretrained(
+        "pdelobelle/robbert-v2-dutch-base", do_lower_case=args.do_lower_case
+    )
     model = load_pretrained_model_manual(hid_layer, drop_ratio, args)
 
     #!########## Training ###########
@@ -204,7 +218,7 @@ def objective_manual(hid_layer, drop_ratio, lear_rate, num_epochs, warmup_epochs
             args, logger, processor, task_name, label_list, tokenizer, output_mode
         )
         best_result = train_me_manual(
-	        lear_rate,
+            lear_rate,
             num_epochs,
             warmup_epochs,
             ba_size,
@@ -218,8 +232,24 @@ def objective_manual(hid_layer, drop_ratio, lear_rate, num_epochs, warmup_epochs
             tokenizer,
             output_mode,
         )
-        out.write("RESULT: " + str(best_result) + "hid layer: "+ str(hid_layer) + "drop ratio: " + str(drop_ratio) +  "lear_rate: " + str(lear_rate) + "num epochs:" + str(
-            num_epochs) + "warmup epochs: " + str(warmup_epochs) + "random seed:" + str(rand_seed) + ba_size + str(ba_size))
+        out.write(
+            "RESULT: "
+            + str(best_result)
+            + "hid layer: "
+            + str(hid_layer)
+            + "drop ratio: "
+            + str(drop_ratio)
+            + "lear_rate: "
+            + str(lear_rate)
+            + "num epochs:"
+            + str(num_epochs)
+            + "warmup epochs: "
+            + str(warmup_epochs)
+            + "random seed:"
+            + str(rand_seed)
+            + ba_size
+            + str(ba_size)
+        )
         return best_result
 
     if best_output == True:
@@ -228,7 +258,7 @@ def objective_manual(hid_layer, drop_ratio, lear_rate, num_epochs, warmup_epochs
 
 def objective(trial):
 
-    #* read configuration into config via /utils/Config.py
+    # * read configuration into config via /utils/Config.py
     config = Config(main_conf_path="./")
 
     # apply system arguments if exist
@@ -244,7 +274,7 @@ def objective(trial):
 
     args = config
 
-    if (print_model == True):
+    if print_model == True:
         print(args.__dict__)
 
     # logger
@@ -272,7 +302,7 @@ def objective(trial):
             config.update_params(cmd_arg)
     else:
 
-        #? Setup logger if this is the first run.
+        # ? Setup logger if this is the first run.
         if not os.path.exists("saves"):
             os.mkdir("saves")
         log_dir = make_log_dir(os.path.join("saves", args.bert_model))
@@ -280,12 +310,14 @@ def objective(trial):
         config.save(log_dir)
     args.log_dir = log_dir
 
-    #? set CUDA devices
-    device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+    # ? set CUDA devices
+    device = torch.device(
+        "cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu"
+    )
     args.n_gpu = torch.cuda.device_count()
     args.device = device
 
-    #* Display user what version we are using
+    # * Display user what version we are using
     if cuda_output == True and torch.cuda.is_available() and not args.no_cuda:
         print("Using CUDA")
         logger.info("device: {} n_gpu: {}".format(device, args.n_gpu))
@@ -293,9 +325,9 @@ def objective(trial):
         print("USING CPU")
         logger.info("device: {} n_gpu: {}".format(device, args.n_gpu))
 
-    #* OPTUNA SEED TWEEKING
+    # * OPTUNA SEED TWEEKING
     if optuna_tweak_seed == True:
-        optuna_seed = trial.suggest_float('optuna_seed', 0.0, 2.0)
+        optuna_seed = trial.suggest_float("optuna_seed", 0.0, 2.0)
         random.seed(optuna_seed)
         np.random.seed(optuna_seed)
         torch.manual_seed(optuna_seed)
@@ -308,18 +340,20 @@ def objective(trial):
         if args.n_gpu > 0:
             torch.cuda.manual_seed_all(args.seed)
 
-    #? get dataset and processor
+    # ? get dataset and processor
     task_name = args.task_name.lower()
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
     label_list = processor.get_labels()
     args.num_labels = len(label_list)
-    
+
     #######
-    #DUTCH#
+    # DUTCH#
     #######
-    #* build tokenizer and model
-    tokenizer = RobertaTokenizer.from_pretrained("pdelobelle/robbert-v2-dutch-base", do_lower_case=args.do_lower_case)
+    # * build tokenizer and model
+    tokenizer = RobertaTokenizer.from_pretrained(
+        "pdelobelle/robbert-v2-dutch-base", do_lower_case=args.do_lower_case
+    )
 
     if optunamode == True:
         model = load_pretrained_model(trial, args)
@@ -330,7 +364,7 @@ def objective(trial):
             args, logger, processor, task_name, label_list, tokenizer, output_mode
         )
         best_result = train_me(
-	    trial,
+            trial,
             args,
             logger,
             model,
@@ -345,10 +379,12 @@ def objective(trial):
     if best_output == True:
         logger.info(f"Saved to {logger.log_dir}")
 
+
 ###################################
-#Joost optuna variant of run_train#
+# Joost optuna variant of run_train#
 ###################################
-    
+
+
 def train_me(
     trial,
     args,
@@ -365,23 +401,27 @@ def train_me(
     tr_loss = 0
     num_train_optimization_steps = len(train_dataloader) * args.num_train_epoch
 
-    #? Prepare optimizer, scheduler
+    # ? Prepare optimizer, scheduler
     param_optimizer = list(model.named_parameters())
     no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
     optimizer_grouped_parameters = [
         {
-            "params": [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)],
+            "params": [
+                p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
+            ],
             "weight_decay": 0.01,
         },
         {
-            "params": [p for n, p in param_optimizer if any(nd in n for nd in no_decay)],
+            "params": [
+                p for n, p in param_optimizer if any(nd in n for nd in no_decay)
+            ],
             "weight_decay": 0.0,
         },
     ]
 
-    #optuna edit by joost
+    # optuna edit by joost
     if optuna_tweak_learning_rate == True:
-        lear_rate = trial.suggest_float('lear_rate', 7.8e-5, 8.2e-5)
+        lear_rate = trial.suggest_float("lear_rate", 7.8e-5, 8.2e-5)
         optimizer = AdamW(optimizer_grouped_parameters, lr=lear_rate)
     else:
         optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate)
@@ -397,7 +437,7 @@ def train_me(
         logger.info(f"  Batch size = {args.train_batch_size}")
         logger.info(f"  Num steps = { num_train_optimization_steps}")
 
-    #? Run training
+    # ? Run training
     model.train()
     max_val_f1 = -1
     max_result = {}
@@ -420,7 +460,7 @@ def train_me(
             else:
                 input_ids, input_mask, segment_ids, label_ids = batch
 
-            #* compute loss values
+            # * compute loss values
             if args.model_type in ["BERT_SEQ", "BERT_BASE", "MELBERT_SPV"]:
                 logits = model(
                     input_ids,
@@ -428,7 +468,9 @@ def train_me(
                     token_type_ids=segment_ids,
                     attention_mask=input_mask,
                 )
-                loss_fct = nn.NLLLoss(weight=torch.Tensor([1, args.class_weight]).to(args.device))
+                loss_fct = nn.NLLLoss(
+                    weight=torch.Tensor([1, args.class_weight]).to(args.device)
+                )
                 loss = loss_fct(logits.view(-1, args.num_labels), label_ids.view(-1))
             elif args.model_type in ["MELBERT_MIP", "MELBERT"]:
                 logits = model(
@@ -440,10 +482,12 @@ def train_me(
                     token_type_ids=segment_ids,
                     attention_mask=input_mask,
                 )
-                loss_fct = nn.NLLLoss(weight=torch.Tensor([1, args.class_weight]).to(args.device))
+                loss_fct = nn.NLLLoss(
+                    weight=torch.Tensor([1, args.class_weight]).to(args.device)
+                )
                 loss = loss_fct(logits.view(-1, args.num_labels), label_ids.view(-1))
 
-            #* average loss if on multi-gpu.
+            # * average loss if on multi-gpu.
             if args.n_gpu > 1:
                 loss = loss.mean()
 
@@ -462,14 +506,23 @@ def train_me(
         if training_output == True:
             logger.info(f"[epoch {epoch+1}] ,lr: {cur_lr} ,tr_loss: {tr_loss}")
 
-        #? evaluate
+        # ? evaluate
         if args.do_eval:
             all_guids, eval_dataloader = load_test_data(
-                args, logger, processor, task_name, label_list, tokenizer, output_mode, k
+                args,
+                logger,
+                processor,
+                task_name,
+                label_list,
+                tokenizer,
+                output_mode,
+                k,
             )
-            result = run_eval(args, logger, model, eval_dataloader, all_guids, task_name)
+            result = run_eval(
+                args, logger, model, eval_dataloader, all_guids, task_name
+            )
 
-            #? update
+            # ? update
             if result["f1"] > max_val_f1:
                 max_val_f1 = result["f1"]
                 max_result = result
@@ -483,8 +536,9 @@ def train_me(
         for key in sorted(max_result.keys()):
             logger.info(f"  {key} = {str(max_result[key])}")
 
-    #We return the maximum f1 score in this example, because that is what we want to optimize with optuna
+    # We return the maximum f1 score in this example, because that is what we want to optimize with optuna
     return max_val_f1
+
 
 def train_me_manual(
     lear_rate_manual,
@@ -505,20 +559,23 @@ def train_me_manual(
     tr_loss = 0
     num_train_optimization_steps = len(train_dataloader) * train_epoch_manual
 
-    #? Prepare optimizer, scheduler
+    # ? Prepare optimizer, scheduler
     param_optimizer = list(model.named_parameters())
     no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
     optimizer_grouped_parameters = [
         {
-            "params": [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)],
+            "params": [
+                p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
+            ],
             "weight_decay": 0.01,
         },
         {
-            "params": [p for n, p in param_optimizer if any(nd in n for nd in no_decay)],
+            "params": [
+                p for n, p in param_optimizer if any(nd in n for nd in no_decay)
+            ],
             "weight_decay": 0.0,
         },
     ]
-
 
     optimizer = AdamW(optimizer_grouped_parameters, lr=lear_rate_manual)
     if args.lr_schedule != False or args.lr_schedule.lower() != "none":
@@ -533,7 +590,7 @@ def train_me_manual(
         logger.info(f"  Batch size = {train_batch_size_manual}")
         logger.info(f"  Num steps = { num_train_optimization_steps}")
 
-    #? Run training
+    # ? Run training
     model.train()
     max_val_f1 = -1
     max_result = {}
@@ -556,7 +613,7 @@ def train_me_manual(
             else:
                 input_ids, input_mask, segment_ids, label_ids = batch
 
-            #* compute loss values
+            # * compute loss values
             if args.model_type in ["BERT_SEQ", "BERT_BASE", "MELBERT_SPV"]:
                 logits = model(
                     input_ids,
@@ -564,7 +621,9 @@ def train_me_manual(
                     token_type_ids=segment_ids,
                     attention_mask=input_mask,
                 )
-                loss_fct = nn.NLLLoss(weight=torch.Tensor([1, args.class_weight]).to(args.device))
+                loss_fct = nn.NLLLoss(
+                    weight=torch.Tensor([1, args.class_weight]).to(args.device)
+                )
                 loss = loss_fct(logits.view(-1, args.num_labels), label_ids.view(-1))
             elif args.model_type in ["MELBERT_MIP", "MELBERT"]:
                 logits = model(
@@ -576,10 +635,12 @@ def train_me_manual(
                     token_type_ids=segment_ids,
                     attention_mask=input_mask,
                 )
-                loss_fct = nn.NLLLoss(weight=torch.Tensor([1, args.class_weight]).to(args.device))
+                loss_fct = nn.NLLLoss(
+                    weight=torch.Tensor([1, args.class_weight]).to(args.device)
+                )
                 loss = loss_fct(logits.view(-1, args.num_labels), label_ids.view(-1))
 
-            #* average loss if on multi-gpu.
+            # * average loss if on multi-gpu.
             if args.n_gpu > 1:
                 loss = loss.mean()
 
@@ -598,14 +659,23 @@ def train_me_manual(
         if training_output == True:
             logger.info(f"[epoch {epoch+1}] ,lr: {cur_lr} ,tr_loss: {tr_loss}")
 
-        #? evaluate
+        # ? evaluate
         if args.do_eval:
             all_guids, eval_dataloader = load_test_data(
-                args, logger, processor, task_name, label_list, tokenizer, output_mode, k
+                args,
+                logger,
+                processor,
+                task_name,
+                label_list,
+                tokenizer,
+                output_mode,
+                k,
             )
-            result = run_eval(args, logger, model, eval_dataloader, all_guids, task_name)
+            result = run_eval(
+                args, logger, model, eval_dataloader, all_guids, task_name
+            )
 
-            #? update
+            # ? update
             if result["f1"] > max_val_f1:
                 max_val_f1 = result["f1"]
                 max_result = result
@@ -619,8 +689,9 @@ def train_me_manual(
         for key in sorted(max_result.keys()):
             logger.info(f"  {key} = {str(max_result[key])}")
 
-    #We return the maximum f1 score in this example, because that is what we want to optimize with optuna
+    # We return the maximum f1 score in this example, because that is what we want to optimize with optuna
     return max_val_f1
+
 
 def run_train(
     args,
@@ -637,16 +708,20 @@ def run_train(
     tr_loss = 0
     num_train_optimization_steps = len(train_dataloader) * args.num_train_epoch
 
-    #? Prepare optimizer, scheduler
+    # ? Prepare optimizer, scheduler
     param_optimizer = list(model.named_parameters())
     no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
     optimizer_grouped_parameters = [
         {
-            "params": [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)],
+            "params": [
+                p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
+            ],
             "weight_decay": 0.01,
         },
         {
-            "params": [p for n, p in param_optimizer if any(nd in n for nd in no_decay)],
+            "params": [
+                p for n, p in param_optimizer if any(nd in n for nd in no_decay)
+            ],
             "weight_decay": 0.0,
         },
     ]
@@ -663,7 +738,7 @@ def run_train(
         logger.info(f"  Batch size = {args.train_batch_size}")
         logger.info(f"  Num steps = { num_train_optimization_steps}")
 
-    #? Run training
+    # ? Run training
     model.train()
     max_val_f1 = -1
     max_result = {}
@@ -686,7 +761,7 @@ def run_train(
             else:
                 input_ids, input_mask, segment_ids, label_ids = batch
 
-            #* compute loss values
+            # * compute loss values
             if args.model_type in ["BERT_SEQ", "BERT_BASE", "MELBERT_SPV"]:
                 logits = model(
                     input_ids,
@@ -694,7 +769,9 @@ def run_train(
                     token_type_ids=segment_ids,
                     attention_mask=input_mask,
                 )
-                loss_fct = nn.NLLLoss(weight=torch.Tensor([1, args.class_weight]).to(args.device))
+                loss_fct = nn.NLLLoss(
+                    weight=torch.Tensor([1, args.class_weight]).to(args.device)
+                )
                 loss = loss_fct(logits.view(-1, args.num_labels), label_ids.view(-1))
             elif args.model_type in ["MELBERT_MIP", "MELBERT"]:
                 logits = model(
@@ -706,10 +783,12 @@ def run_train(
                     token_type_ids=segment_ids,
                     attention_mask=input_mask,
                 )
-                loss_fct = nn.NLLLoss(weight=torch.Tensor([1, args.class_weight]).to(args.device))
+                loss_fct = nn.NLLLoss(
+                    weight=torch.Tensor([1, args.class_weight]).to(args.device)
+                )
                 loss = loss_fct(logits.view(-1, args.num_labels), label_ids.view(-1))
 
-            #* average loss if on multi-gpu.
+            # * average loss if on multi-gpu.
             if args.n_gpu > 1:
                 loss = loss.mean()
 
@@ -727,14 +806,23 @@ def run_train(
         cur_lr = optimizer.param_groups[0]["lr"]
         logger.info(f"[epoch {epoch+1}] ,lr: {cur_lr} ,tr_loss: {tr_loss}")
 
-        #? evaluate
+        # ? evaluate
         if args.do_eval:
             all_guids, eval_dataloader = load_test_data(
-                args, logger, processor, task_name, label_list, tokenizer, output_mode, k
+                args,
+                logger,
+                processor,
+                task_name,
+                label_list,
+                tokenizer,
+                output_mode,
+                k,
             )
-            result = run_eval(args, logger, model, eval_dataloader, all_guids, task_name)
+            result = run_eval(
+                args, logger, model, eval_dataloader, all_guids, task_name
+            )
 
-            #? update
+            # ? update
             if result["f1"] > max_val_f1:
                 max_val_f1 = result["f1"]
                 max_result = result
@@ -750,7 +838,9 @@ def run_train(
     return model, max_result
 
 
-def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_preds=False):
+def run_eval(
+    args, logger, model, eval_dataloader, all_guids, task_name, return_preds=False
+):
     model.eval()
 
     eval_loss = 0
@@ -786,7 +876,9 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
                     attention_mask=input_mask,
                 )
                 loss_fct = nn.NLLLoss()
-                tmp_eval_loss = loss_fct(logits.view(-1, args.num_labels), label_ids.view(-1))
+                tmp_eval_loss = loss_fct(
+                    logits.view(-1, args.num_labels), label_ids.view(-1)
+                )
                 eval_loss += tmp_eval_loss.mean().item()
                 nb_eval_steps += 1
 
@@ -795,7 +887,9 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
                     pred_guids.append([all_guids[i] for i in idx])
                     out_label_ids = label_ids.detach().cpu().numpy()
                 else:
-                    preds[0] = np.append(preds[0], logits.detach().cpu().numpy(), axis=0)
+                    preds[0] = np.append(
+                        preds[0], logits.detach().cpu().numpy(), axis=0
+                    )
                     pred_guids[0].extend([all_guids[i] for i in idx])
                     out_label_ids = np.append(
                         out_label_ids, label_ids.detach().cpu().numpy(), axis=0
@@ -812,7 +906,9 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
                     attention_mask=input_mask,
                 )
                 loss_fct = nn.NLLLoss()
-                tmp_eval_loss = loss_fct(logits.view(-1, args.num_labels), label_ids.view(-1))
+                tmp_eval_loss = loss_fct(
+                    logits.view(-1, args.num_labels), label_ids.view(-1)
+                )
                 eval_loss += tmp_eval_loss.mean().item()
                 nb_eval_steps += 1
 
@@ -821,7 +917,9 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
                     pred_guids.append([all_guids[i] for i in idx])
                     out_label_ids = label_ids.detach().cpu().numpy()
                 else:
-                    preds[0] = np.append(preds[0], logits.detach().cpu().numpy(), axis=0)
+                    preds[0] = np.append(
+                        preds[0], logits.detach().cpu().numpy(), axis=0
+                    )
                     pred_guids[0].extend([all_guids[i] for i in idx])
                     out_label_ids = np.append(
                         out_label_ids, label_ids.detach().cpu().numpy(), axis=0
@@ -831,7 +929,7 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
     preds = preds[0]
     preds = np.argmax(preds, axis=1)
 
-    #? compute metrics
+    # ? compute metrics
     result = compute_metrics(preds, out_label_ids)
 
     for key in sorted(result.keys()):
@@ -843,7 +941,7 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
 
 
 def load_pretrained_model(trial, args):
-    #? Pretrained Model
+    # ? Pretrained Model
     bert = AutoModel.from_pretrained("pdelobelle/robbert-v2-dutch-base")
     config = bert.config
     config.type_vocab_size = 4
@@ -879,16 +977,20 @@ def load_pretrained_model(trial, args):
     if args.model_type == "MELBERT":
         if optuna_tweak_hidden_layers == True:
             model = AutoModelForSequenceClassification_SPV_MIP_optima(
-               trial, args=args, Model=bert, config=config, num_labels=args.num_labels
+                trial, args=args, Model=bert, config=config, num_labels=args.num_labels
             )
         elif optuna_tweak_drop_ratio == True:
-             model = AutoModelForSequenceClassification_SPV_MIP_optima_drop(
+            model = AutoModelForSequenceClassification_SPV_MIP_optima_drop(
                 trial, args=args, Model=bert, config=config, num_labels=args.num_labels
-            )     
-        elif manualmode == True:   
+            )
+        elif manualmode == True:
             model = AutoModelForSequenceClassification_SPV_MIP_optima_manual(
-                hid_lay, args=args, Model=bert, config=config, num_labels=args.num_labels
-            )        
+                hid_lay,
+                args=args,
+                Model=bert,
+                config=config,
+                num_labels=args.num_labels,
+            )
         else:
             model = AutoModelForSequenceClassification_SPV_MIP(
                 args=args, Model=bert, config=config, num_labels=args.num_labels
@@ -899,8 +1001,9 @@ def load_pretrained_model(trial, args):
         model = torch.nn.DataParallel(model)
     return model
 
+
 def load_pretrained_model_manual(am_hidden, am_drop, args):
-    #? Pretrained Model
+    # ? Pretrained Model
     bert = AutoModel.from_pretrained("pdelobelle/robbert-v2-dutch-base")
     config = bert.config
     config.type_vocab_size = 4
@@ -935,12 +1038,19 @@ def load_pretrained_model_manual(am_hidden, am_drop, args):
     #! PROBABLY INTERESTING FOR CONVERSION TO DUTCH
     if args.model_type == "MELBERT":
         model = AutoModelForSequenceClassification_SPV_MIP_optima_manual(
-            am_hidden, am_drop args=args, Model=bert, config=config, num_labels=args.num_labels
+            am_hidden,
+            am_drop,
+            args=args,
+            Model=bert,
+            config=config,
+            num_labels=args.num_labels,
+        )
 
     model.to(args.device)
     if args.n_gpu > 1 and not args.no_cuda:
         model = torch.nn.DataParallel(model)
     return model
+
 
 def save_model(args, model, tokenizer):
     model_to_save = (
@@ -971,6 +1081,6 @@ def load_trained_model(args, model, tokenizer):
 
     return model
 
+
 if __name__ == "__main__":
     main()
-
