@@ -140,11 +140,11 @@ for directory_d2_first in subdirectories:
                             child_of_child = child.get("postag")
                             if not str(child_of_child) == "None":  # empty
 
-                                pos = findpos(child_of_child)
+                                pos = findpos(child)
                                 if pos is not "empty":
 
                                     # ? Get word offset
-                                    word = child_of_child.get("word")
+                                    word = child.get("word")
                                     word_offset = sentence.rfind(word)
 
                                     #! Calculate and write output
@@ -171,11 +171,11 @@ for directory_d2_first in subdirectories:
                                 child_of_child = childx.get("postag")
                                 if not str(child_of_child) == "None":  # empty
 
-                                    pos = findpos(child_of_child)
+                                    pos = findpos(childx)
                                     if pos is not "empty":
 
                                         # ? Get word offset
-                                        word = child_of_child.get("word")
+                                        word = childx.get("word")
                                         word_offset = sentence.rfind(word)
 
                                         #! Calculate and write output
@@ -203,11 +203,11 @@ for directory_d2_first in subdirectories:
                                     child_of_child = childy.get("postag")
                                     if not str(child_of_child) == "None":  # empty
 
-                                        pos = findpos(child_of_child)
+                                        pos = findpos(childy)
                                         if pos is not "empty":
 
                                             # ? Get word offset
-                                            word = child_of_child.get("word")
+                                            word = childy.get("word")
                                             word_offset = sentence.rfind(word)
 
                                             #! Calculate and write output
@@ -230,70 +230,227 @@ for directory_d2_first in subdirectories:
                                     # LEVEL 4#
                                     #########
 
-                                    verbfound4 = False
                                     for childz in childy:
-                                        kind_child = childz.get("pt")
-                                        if not str(kind_child) == "None":  # empty
-                                            if kind_child.find("ww") != -1:
-                                                verbd4 = childz.get("word")
-                                                # New: add verb lemma
-                                                verbfound4 = True
+                                        child_of_child = childz.get("postag")
+                                        if not str(child_of_child) == "None":  # empty
 
-                                    for childz in childy:
-                                        if verbfound4 == True:
-                                            rel_child = childz.get("rel")
+                                            pos = findpos(childz)
+                                            if pos is not "empty":
+
+                                                # ? Get word offset
+                                                word = childz.get("word")
+                                                word_offset = sentence.rfind(word)
+
+                                                #! Calculate and write output
+                                                output = (
+                                                    "COV_fragment01"
+                                                    + " "
+                                                    + str(sentence_number)
+                                                    + "\t"
+                                                    + "0"
+                                                    + "\t"
+                                                    + str(sentence)
+                                                    + "\t"
+                                                    + pos
+                                                    + "\t"
+                                                    + str(word_offset)
+                                                )
+                                                f.write(output + "\n")
 
                                         #########
                                         # LEVEL 5#
                                         #########
 
-                                        verbfound5 = False
                                         for childa in childz:
-                                            kind_child = childa.get("pt")
-                                            if not str(kind_child) == "None":  # empty
-                                                if kind_child.find("ww") != -1:
-                                                    verbd5 = childa.get("word")
-                                                    # New: add verb lemma
-                                                    verbfound5 = True
+                                            child_of_child = childa.get("postag")
+                                            if (
+                                                not str(child_of_child) == "None"
+                                            ):  # empty
 
-                                        for childa in childz:
-                                            if verbfound5 == True:
-                                                rel_child = childa.get("rel")
+                                                pos = findpos(childa)
+                                                if pos is not "empty":
+
+                                                    # ? Get word offset
+                                                    word = childa.get("word")
+                                                    word_offset = sentence.rfind(word)
+
+                                                    #! Calculate and write output
+                                                    output = (
+                                                        "COV_fragment01"
+                                                        + " "
+                                                        + str(sentence_number)
+                                                        + "\t"
+                                                        + "0"
+                                                        + "\t"
+                                                        + str(sentence)
+                                                        + "\t"
+                                                        + pos
+                                                        + "\t"
+                                                        + str(word_offset)
+                                                    )
+                                                    f.write(output + "\n")
 
                                             #########
                                             # LEVEL 6#
                                             #########
 
-                                            verbfound6 = False
                                             for childb in childa:
-                                                kind_child = childb.get("pt")
+                                                child_of_child = childb.get("postag")
                                                 if (
-                                                    not str(kind_child) == "None"
+                                                    not str(child_of_child) == "None"
                                                 ):  # empty
-                                                    if kind_child.find("ww") != -1:
-                                                        verbd6 = childb.get("word")
-                                                        verbfound6 = True
 
-                                            for childb in childa:
-                                                if verbfound6 == True:
-                                                    rel_child = childb.get("rel")
+                                                    pos = findpos(childb)
+                                                    if pos is not "empty":
+
+                                                        # ? Get word offset
+                                                        word = childb.get("word")
+                                                        word_offset = sentence.rfind(
+                                                            word
+                                                        )
+
+                                                        #! Calculate and write output
+                                                        output = (
+                                                            "COV_fragment01"
+                                                            + " "
+                                                            + str(sentence_number)
+                                                            + "\t"
+                                                            + "0"
+                                                            + "\t"
+                                                            + str(sentence)
+                                                            + "\t"
+                                                            + pos
+                                                            + "\t"
+                                                            + str(word_offset)
+                                                        )
+                                                        f.write(output + "\n")
 
                                                 #########
                                                 # LEVEL 7#
                                                 #########
 
-                                                verbfound7 = False
                                                 for childc in childb:
-                                                    kind_child = childc.get("pt")
+                                                    child_of_child = childc.get(
+                                                        "postag"
+                                                    )
                                                     if (
-                                                        not str(kind_child) == "None"
+                                                        not str(child_of_child)
+                                                        == "None"
                                                     ):  # empty
-                                                        if kind_child.find("ww") != -1:
-                                                            verbd7 = childc.get("word")
-                                                            verbfound7 = True
 
-                                                for childc in childb:
-                                                    if verbfound7 == True:
-                                                        rel_child = childc.get("rel")
+                                                        pos = findpos(childc)
+                                                        if pos is not "empty":
+
+                                                            # ? Get word offset
+                                                            word = childc.get("word")
+                                                            word_offset = (
+                                                                sentence.rfind(word)
+                                                            )
+
+                                                            #! Calculate and write output
+                                                            output = (
+                                                                "COV_fragment01"
+                                                                + " "
+                                                                + str(sentence_number)
+                                                                + "\t"
+                                                                + "0"
+                                                                + "\t"
+                                                                + str(sentence)
+                                                                + "\t"
+                                                                + pos
+                                                                + "\t"
+                                                                + str(word_offset)
+                                                            )
+                                                            f.write(output + "\n")
+
+                                                    ##########
+                                                    # LEVEL 8#
+                                                    ##########
+
+                                                    for childd in childc:
+                                                        child_of_child = childd.get(
+                                                            "postag"
+                                                        )
+                                                        if (
+                                                            not str(child_of_child)
+                                                            == "None"
+                                                        ):  # empty
+
+                                                            pos = findpos(childd)
+                                                            if pos is not "empty":
+
+                                                                # ? Get word offset
+                                                                word = childd.get(
+                                                                    "word"
+                                                                )
+                                                                word_offset = (
+                                                                    sentence.rfind(word)
+                                                                )
+
+                                                                #! Calculate and write output
+                                                                output = (
+                                                                    "COV_fragment01"
+                                                                    + " "
+                                                                    + str(
+                                                                        sentence_number
+                                                                    )
+                                                                    + "\t"
+                                                                    + "0"
+                                                                    + "\t"
+                                                                    + str(sentence)
+                                                                    + "\t"
+                                                                    + pos
+                                                                    + "\t"
+                                                                    + str(word_offset)
+                                                                )
+                                                                f.write(output + "\n")
+
+                                                        ###########
+                                                        # LEVEL 9 #
+                                                        ###########
+
+                                                        for childe in childd:
+                                                            child_of_child = childe.get(
+                                                                "postag"
+                                                            )
+                                                            if (
+                                                                not str(child_of_child)
+                                                                == "None"
+                                                            ):  # empty
+
+                                                                pos = findpos(childe)
+                                                                if pos is not "empty":
+
+                                                                    # ? Get word offset
+                                                                    word = childe.get(
+                                                                        "word"
+                                                                    )
+                                                                    word_offset = (
+                                                                        sentence.rfind(
+                                                                            word
+                                                                        )
+                                                                    )
+
+                                                                    #! Calculate and write output
+                                                                    output = (
+                                                                        "COV_fragment01"
+                                                                        + " "
+                                                                        + str(
+                                                                            sentence_number
+                                                                        )
+                                                                        + "\t"
+                                                                        + "0"
+                                                                        + "\t"
+                                                                        + str(sentence)
+                                                                        + "\t"
+                                                                        + pos
+                                                                        + "\t"
+                                                                        + str(
+                                                                            word_offset
+                                                                        )
+                                                                    )
+                                                                    f.write(
+                                                                        output + "\n"
+                                                                    )
 
     f.close()
