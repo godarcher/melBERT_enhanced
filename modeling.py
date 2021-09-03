@@ -284,7 +284,9 @@ class AutoModelForSequenceClassification_MIP(nn.Module):
         target_output = target_output.sum(1) / target_mask.sum()  # [batch, hidden]
 
         # Second encoder for only the target word
-        outputs_2 = self.encoder(input_ids_2, attention_mask=attention_mask_2, head_mask=head_mask)
+        outputs_2 = self.encoder(
+            input_ids_2, attention_mask=attention_mask_2, head_mask=head_mask
+        )
         sequence_output_2 = outputs_2[0]  # [batch, max_len, hidden]
 
         # Get target ouput with target mask
@@ -300,6 +302,8 @@ class AutoModelForSequenceClassification_MIP(nn.Module):
             loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
             return loss
         return logits
+
+
 class AutoModelForSequenceClassification_SPV_MIP(nn.Module):
     """MelBERT"""
 
@@ -315,7 +319,7 @@ class AutoModelForSequenceClassification_SPV_MIP(nn.Module):
         self.SPV_linear = nn.Linear(config.hidden_size * 2, args.classifier_hidden)
         self.MIP_linear = nn.Linear(config.hidden_size * 2, args.classifier_hidden)
         self.classifier = nn.Linear(args.classifier_hidden * 2, num_labels)
-            
+
         self._init_weights(self.SPV_linear)
         self._init_weights(self.MIP_linear)
 
@@ -380,7 +384,9 @@ class AutoModelForSequenceClassification_SPV_MIP(nn.Module):
         target_output = target_output.mean(1)  # [batch, hidden]
 
         # Second encoder for only the target word
-        outputs_2 = self.encoder(input_ids_2, attention_mask=attention_mask_2, head_mask=head_mask)
+        outputs_2 = self.encoder(
+            input_ids_2, attention_mask=attention_mask_2, head_mask=head_mask
+        )
         sequence_output_2 = outputs_2[0]  # [batch, max_len, hidden]
 
         # Get target ouput with target mask
@@ -392,7 +398,9 @@ class AutoModelForSequenceClassification_SPV_MIP(nn.Module):
         SPV_hidden = self.SPV_linear(torch.cat([pooled_output, target_output], dim=1))
         MIP_hidden = self.MIP_linear(torch.cat([target_output_2, target_output], dim=1))
 
-        logits = self.classifier(self.dropout(torch.cat([SPV_hidden, MIP_hidden], dim=1)))
+        logits = self.classifier(
+            self.dropout(torch.cat([SPV_hidden, MIP_hidden], dim=1))
+        )
         logits = self.logsoftmax(logits)
 
         if labels is not None:
@@ -401,7 +409,8 @@ class AutoModelForSequenceClassification_SPV_MIP(nn.Module):
             return loss
         return logits
 
-class AutoModelForSequenceClassification_SPV_MIP_optima( nn.Module):
+
+class AutoModelForSequenceClassification_SPV_MIP_optima(nn.Module):
     """MelBERT"""
 
     def __init__(self, trial, args, Model, config, num_labels=2):
@@ -414,13 +423,13 @@ class AutoModelForSequenceClassification_SPV_MIP_optima( nn.Module):
         self.args = args
 
         ###################
-        #JOOST OPTIMA EDIT#
+        # JOOST OPTIMA EDIT#
         ###################
-        hidden_layers = trial.suggest_int('hidden_layers', 400, 1300)
+        hidden_layers = trial.suggest_int("hidden_layers", 400, 1300)
         self.SPV_linear = nn.Linear(config.hidden_size * 2, hidden_layers)
         self.MIP_linear = nn.Linear(config.hidden_size * 2, hidden_layers)
         self.classifier = nn.Linear(hidden_layers * 2, num_labels)
-        
+
         self._init_weights(self.SPV_linear)
         self._init_weights(self.MIP_linear)
 
@@ -485,7 +494,9 @@ class AutoModelForSequenceClassification_SPV_MIP_optima( nn.Module):
         target_output = target_output.mean(1)  # [batch, hidden]
 
         # Second encoder for only the target word
-        outputs_2 = self.encoder(input_ids_2, attention_mask=attention_mask_2, head_mask=head_mask)
+        outputs_2 = self.encoder(
+            input_ids_2, attention_mask=attention_mask_2, head_mask=head_mask
+        )
         sequence_output_2 = outputs_2[0]  # [batch, max_len, hidden]
 
         # Get target ouput with target mask
@@ -497,7 +508,9 @@ class AutoModelForSequenceClassification_SPV_MIP_optima( nn.Module):
         SPV_hidden = self.SPV_linear(torch.cat([pooled_output, target_output], dim=1))
         MIP_hidden = self.MIP_linear(torch.cat([target_output_2, target_output], dim=1))
 
-        logits = self.classifier(self.dropout(torch.cat([SPV_hidden, MIP_hidden], dim=1)))
+        logits = self.classifier(
+            self.dropout(torch.cat([SPV_hidden, MIP_hidden], dim=1))
+        )
         logits = self.logsoftmax(logits)
 
         if labels is not None:
@@ -505,6 +518,7 @@ class AutoModelForSequenceClassification_SPV_MIP_optima( nn.Module):
             loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
             return loss
         return logits
+
 
 class AutoModelForSequenceClassification_SPV_MIP_optima_drop(nn.Module):
     """MelBERT"""
@@ -516,16 +530,16 @@ class AutoModelForSequenceClassification_SPV_MIP_optima_drop(nn.Module):
         self.encoder = Model
         self.config = config
 
-        #joost optima edit
-        drop_ratio = trial.suggest_float('drop_ratio', 0.0, 1.0)
+        # joost optima edit
+        drop_ratio = trial.suggest_float("drop_ratio", 0.0, 1.0)
         self.dropout = nn.Dropout(drop_ratio)
-        
+
         self.args = args
 
         self.SPV_linear = nn.Linear(config.hidden_size * 2, args.classifier_hidden)
         self.MIP_linear = nn.Linear(config.hidden_size * 2, args.classifier_hidden)
         self.classifier = nn.Linear(hidden_layers * 2, args.classifier_hidden)
-        
+
         self._init_weights(self.SPV_linear)
         self._init_weights(self.MIP_linear)
 
@@ -590,7 +604,9 @@ class AutoModelForSequenceClassification_SPV_MIP_optima_drop(nn.Module):
         target_output = target_output.mean(1)  # [batch, hidden]
 
         # Second encoder for only the target word
-        outputs_2 = self.encoder(input_ids_2, attention_mask=attention_mask_2, head_mask=head_mask)
+        outputs_2 = self.encoder(
+            input_ids_2, attention_mask=attention_mask_2, head_mask=head_mask
+        )
         sequence_output_2 = outputs_2[0]  # [batch, max_len, hidden]
 
         # Get target ouput with target mask
@@ -602,7 +618,9 @@ class AutoModelForSequenceClassification_SPV_MIP_optima_drop(nn.Module):
         SPV_hidden = self.SPV_linear(torch.cat([pooled_output, target_output], dim=1))
         MIP_hidden = self.MIP_linear(torch.cat([target_output_2, target_output], dim=1))
 
-        logits = self.classifier(self.dropout(torch.cat([SPV_hidden, MIP_hidden], dim=1)))
+        logits = self.classifier(
+            self.dropout(torch.cat([SPV_hidden, MIP_hidden], dim=1))
+        )
         logits = self.logsoftmax(logits)
 
         if labels is not None:
@@ -611,25 +629,29 @@ class AutoModelForSequenceClassification_SPV_MIP_optima_drop(nn.Module):
             return loss
         return logits
 
-class AutoModelForSequenceClassification_SPV_MIP_optima_manual( nn.Module):
+
+class AutoModelForSequenceClassification_SPV_MIP_optima_manual(nn.Module):
     """MelBERT"""
 
-    def __init__(self, hid_lay_manual, drop_out_manual, args, Model, config, num_labels=2):
+    def __init__(
+        self, hid_lay_manual, drop_out_manual, args, Model, config, num_labels=2
+    ):
         """Initialize the model"""
-        super(AutoModelForSequenceClassification_SPV_MIP_optima, self).__init__()
+        super(AutoModelForSequenceClassification_SPV_MIP_optima_manual, self).__init__()
         self.num_labels = num_labels
         self.encoder = Model
         self.config = config
         self.dropout = nn.Dropout(drop_out_manual)
         self.args = args
+        self.hid_lay_manual
 
         ###################
-        #JOOST OPTIMA EDIT#
+        # JOOST OPTIMA EDIT#
         ###################
         self.SPV_linear = nn.Linear(config.hidden_size * 2, hid_lay_manual)
         self.MIP_linear = nn.Linear(config.hidden_size * 2, hid_lay_manual)
         self.classifier = nn.Linear(hid_lay_manual * 2, num_labels)
-        
+
         self._init_weights(self.SPV_linear)
         self._init_weights(self.MIP_linear)
 
@@ -694,7 +716,9 @@ class AutoModelForSequenceClassification_SPV_MIP_optima_manual( nn.Module):
         target_output = target_output.mean(1)  # [batch, hidden]
 
         # Second encoder for only the target word
-        outputs_2 = self.encoder(input_ids_2, attention_mask=attention_mask_2, head_mask=head_mask)
+        outputs_2 = self.encoder(
+            input_ids_2, attention_mask=attention_mask_2, head_mask=head_mask
+        )
         sequence_output_2 = outputs_2[0]  # [batch, max_len, hidden]
 
         # Get target ouput with target mask
@@ -706,7 +730,9 @@ class AutoModelForSequenceClassification_SPV_MIP_optima_manual( nn.Module):
         SPV_hidden = self.SPV_linear(torch.cat([pooled_output, target_output], dim=1))
         MIP_hidden = self.MIP_linear(torch.cat([target_output_2, target_output], dim=1))
 
-        logits = self.classifier(self.dropout(torch.cat([SPV_hidden, MIP_hidden], dim=1)))
+        logits = self.classifier(
+            self.dropout(torch.cat([SPV_hidden, MIP_hidden], dim=1))
+        )
         logits = self.logsoftmax(logits)
 
         if labels is not None:
@@ -714,4 +740,3 @@ class AutoModelForSequenceClassification_SPV_MIP_optima_manual( nn.Module):
             loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
             return loss
         return logits
-
