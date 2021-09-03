@@ -194,6 +194,8 @@ def objective_manual(
     #!show how far we are
     count += 1
     print("iteration " + str(count))
+    if count is not 1:
+        print("BEST SCORE SO FAR IS: " + str(bestf1_score))
 
     # * read configuration into config via /utils/Config.py
     config = Config(main_conf_path="./")
