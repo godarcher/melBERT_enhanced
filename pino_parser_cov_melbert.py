@@ -38,6 +38,10 @@ warnings.filterwarnings("ignore")
 
 
 def findpos(child_of_child):
+
+    #we maken een postag aan
+    pos_tag = "empty"
+
     # ? Het correct taggen van werkwoorden, zelfstandige en bijvoeglijke naamwoorden.
     if "WW(" in child_of_child.get("pos"):
         pos_tag = "VERB"
@@ -65,8 +69,8 @@ def findpos(child_of_child):
         pos_tag = "ADV"
     elif "LID(" in child_of_child.get("pos"):
         pos_tag = "DET"
-    elif child_of_child.get("lem").isnumeric():
-        pos_tag = "NUM"
+
+    return pos_tag
 
 
 def listdirs(path):
@@ -151,10 +155,9 @@ for directory_d2_first in subdirectories:
                             child_of_child = child.get("postag")
                             if not str(child_of_child) == "None":  # empty
 
-                                # ? NOUNS
-                                if kind_child.find("N(") != -1:
-                                    verbd1 = child.get("word")
-                                    verbfound = True
+                                pos = findpos(child_of_child)
+                                if pos is not "empty":
+                                    
 
                         for child in smain:
                             if verbfound == True:
@@ -267,17 +270,8 @@ for directory_d2_first in subdirectories:
             # output#
             ########
 
-            # verb based printing filewriting approach
-            # configured for line in file based reading
-            if debug == True:
-                # filename
-                # print("")
-                # print(filename)
-                i = 1
-
             # escape csv problems
             sentence = sentence.replace("\n", "")
-            context = context.replace("\n", "")
 
             # sentence fixes
             if sentence.find(",") != -1 or sentence.find(";") != -1:
@@ -285,10 +279,6 @@ for directory_d2_first in subdirectories:
 
             if sentence[0:1] == " ":
                 sentence = sentence[1:]
-
-            # context fixes
-            if context.find("  ") != -1:
-                context = context.replace("  ", " ")
 
             # *! ACTUAL OUTPUT
 
