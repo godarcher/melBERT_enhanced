@@ -30,31 +30,33 @@ def findpos(child_of_child):
     pos_tag = "empty"
 
     # ? Het correct taggen van werkwoorden, zelfstandige en bijvoeglijke naamwoorden.
-    if "WW(" in child_of_child.get("pos"):
+    if "WW(" in child_of_child.get("postag"):
         pos_tag = "VERB"
-    elif "N(" in child_of_child.get("pos"):
+    elif "N(" in child_of_child.get("postag"):
         pos_tag = "NOUN"
-    elif "ADJ(" in child_of_child.get("pos"):
+    elif "ADJ(" in child_of_child.get("postag"):
         pos_tag = "ADJ"
 
     # ? Het correct taggen van voornaamwoorden
-    elif "VNW(" in child_of_child.get("pos") and "adv-pron" in child_of_child.get(
-        "pos"
+    elif "VNW(" in child_of_child.get("postag") and "adv-pron" in child_of_child.get(
+        "postag"
     ):
         pos_tag = "ADV"
-    elif "VNW(" in child_of_child.get("pos") and "prenom" in child_of_child.get("pos"):
+    elif "VNW(" in child_of_child.get("postag") and "prenom" in child_of_child.get(
+        "postag"
+    ):
         pos_tag = "DET"
     elif (
-        "VNW(" in child_of_child.get("pos")
-        and "pron" in child_of_child.get("pos")
+        "VNW(" in child_of_child.get("postag")
+        and "pron" in child_of_child.get("postag")
         and child_of_child.get("word").tolower() != "het"
     ):
         pos_tag = "PRON"
 
     # ? Het correct taggen van bijwoorden, lidwoorden en nummers
-    elif "BW(" in child_of_child.get("pos"):
+    elif "BW(" in child_of_child.get("postag"):
         pos_tag = "ADV"
-    elif "LID(" in child_of_child.get("pos"):
+    elif "LID(" in child_of_child.get("postag"):
         pos_tag = "DET"
 
     return pos_tag
@@ -141,6 +143,7 @@ for directory_d2_first in subdirectories:
                             if not str(child_of_child) == "None":  # empty
 
                                 pos = findpos(child)
+                                print(pos)
                                 if pos is not "empty":
 
                                     # ? Get word offset
