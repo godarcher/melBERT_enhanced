@@ -62,10 +62,9 @@ def findpos(child_of_child):
     return pos_tag
 
 
-def writeoutput(word, pos):
-    global sentence
+def writeoutput(pos, word, index):
     # ? Get word offset
-    word_offset = sentence.rfind(word)
+    word_offset = sentence.find(word)
 
     #! Calculate and write output
     output = (
@@ -79,7 +78,7 @@ def writeoutput(word, pos):
         + "\t"
         + pos
         + "\t"
-        + str(word_offset)
+        + index
     )
     f.write(output + "\n")
 
@@ -115,7 +114,6 @@ for directory_d2_first in subdirectories:
 
     context = ""
     context_counter = 0
-    glob_value = ""
 
     for filename in os.listdir(directory_d2):
         if filename.endswith(".xml"):
@@ -146,16 +144,14 @@ for directory_d2_first in subdirectories:
                         # escape csv problems
                         sentence = sentence.replace("\n", "")
                         # sentence fixes
-                        if sentence.find(",") != -1 or sentence.find(";") != -1:
-                            sentence = '"' + sentence + '"'
                         if sentence[0:1] == " ":
                             sentence = sentence[1:]
 
+                for top in alpino_ds:
                     for smain in top:
                         ############
                         # MAIN LEVEL#
                         ############
-
                         for child in smain:
                             child_of_child = child.get("postag")
                             if not str(child_of_child) == "None":  # empty
@@ -164,8 +160,9 @@ for directory_d2_first in subdirectories:
                                 if pos is not "empty":
                                     # get word
                                     word = child.get("word")
+                                    index = child.get("begin")
                                     # call output function
-                                    writeoutput(pos, word)
+                                    writeoutput(pos, word, index)
 
                             #########
                             # LEVEL 2#
