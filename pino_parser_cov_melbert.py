@@ -147,6 +147,29 @@ for directory_d2_first in subdirectories:
                         if sentence[0:1] == " ":
                             sentence = sentence[1:]
 
+                        if sentence[0:1] == " ":
+                            sentence = sentence[1:]
+
+                        if sentence[0:2] == ",,":
+                            sentence = sentence[2:]
+
+                        if sentence[0:3] == "'' ":
+                            sentence = sentence[3:]
+
+                        if sentence[0:1] == " ":
+                            sentence = sentence[1:]
+
+                        sentence = sentence.replace("''", "")
+
+                        sentence = sentence.replace(" ,,", " ")
+
+                        sentence = sentence.replace(",,", " ")
+
+                        sentence = sentence.replace('"', "")
+
+                        if sentence[0:1] == " ":
+                            sentence = sentence[1:]
+
                 for top in alpino_ds:
                     for smain in top:
                         ############
