@@ -92,6 +92,16 @@ out = open("outputs.txt", "w")
 
 def main():
 
+    # * INFOGRAPHIC OUTPUT
+    print("   *                        (           ")
+    print(" (  `         (    (        )\ )  *   ) ")
+    print(" )\))(     (  )\ ( )\  (   (()/(` )  /( ")
+    print("((_)()\   ))\((_))((_) )\   /(_))( )(_))")
+    print("(_()((_) /((_)_ ((_)_ ((_) (_)) (_(_()) ")
+    print("|  \/  |(_)) | | | _ )| __|| _ \|_   _| ")
+    print("| |\/| |/ -_)| | | _ \| _| |   /  | |   ")
+    print("|_|  |_|\___||_| |___/|___||_|_\  |_|   ")
+
     if optunamode == True:
         # We create an optuna study with as goal to maximize the number we put into it.
         study = optuna.create_study(direction="maximize")
@@ -107,6 +117,55 @@ def main():
             print("    {}: {}".format(key, value))
     elif manualmode == True:
         objective_manual(768, 0.2, 7.9e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.85e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.86e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.87e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.88e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.89e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.891e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.891e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.892e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.893e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.894e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.895e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.896e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.897e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.898e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.899e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.901e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.902e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.903e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.904e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.905e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.906e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.907e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.908e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.909e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.91e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.92e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.93e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.94e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.95e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.96e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.97e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.98e-5, 3, 2, 42, 32)
+        objective_manual(768, 0.2, 7.99e-5, 3, 2, 42, 32)
+        objective_manual(1096, 0.2, 8.220e-5, 3, 2, 42, 32)
+        objective_manual(1096, 0.2, 8.225e-5, 3, 2, 42, 32)
+        objective_manual(1096, 0.2, 8.230e-5, 3, 2, 42, 32)
+        objective_manual(1096, 0.2, 8.215e-5, 3, 2, 42, 32)
+        objective_manual(1096, 0.2, 8.235e-5, 3, 2, 42, 32)
+        objective_manual(1096, 0.2, 8.226e-5, 3, 2, 42, 32)
+        objective_manual(1096, 0.2, 8.227e-5, 3, 2, 42, 32)
+        objective_manual(1096, 0.2, 8.224e-5, 3, 2, 42, 32)
+        objective_manual(1096, 0.2, 8.223e-5, 3, 2, 42, 32)
+        objective_manual(461, 0.2, 8.637e-5, 3, 2, 42, 32)
+        objective_manual(461, 0.2, 8.64e-5, 3, 2, 42, 32)
+        objective_manual(461, 0.2, 8.62e-5, 3, 2, 42, 32)
+        objective_manual(461, 0.2, 8.635e-5, 3, 2, 42, 32)
+        objective_manual(461, 0.2, 8.6385e-5, 3, 2, 42, 32)
+        objective_manual(461, 0.2, 8.64e-5, 3, 2, 42, 32)
+
         # We get the option to manually run certain data
 
     if optuna_plot == True:
@@ -527,8 +586,7 @@ def train_me(
             tr_loss += loss.item()
 
         cur_lr = optimizer.param_groups[0]["lr"]
-        if training_output == True:
-            logger.info(f"[epoch {epoch+1}] ,lr: {cur_lr} ,tr_loss: {tr_loss}")
+        logger.info(f"[epoch {epoch+1}] ,lr: {cur_lr} ,tr_loss: {tr_loss}")
 
         # ? evaluate
         if args.do_eval:
@@ -680,8 +738,7 @@ def train_me_manual(
             tr_loss += loss.item()
 
         cur_lr = optimizer.param_groups[0]["lr"]
-        if training_output == True:
-            logger.info(f"[epoch {epoch+1}] ,lr: {cur_lr} ,tr_loss: {tr_loss}")
+        logger.info(f"[epoch {epoch+1}] ,lr: {cur_lr} ,tr_loss: {tr_loss}")
 
         # ? evaluate
         if args.do_eval:
