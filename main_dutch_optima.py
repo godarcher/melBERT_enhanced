@@ -72,6 +72,30 @@ elif amount_of_info == 3:
 elif amount_of_info == 4:
     logging.set_verbosity_error
 
+def main():
+    if optunamode == True:
+        #We create an optuna study with as goal to maximize the number we put into it.
+        study = optuna.create_study(direction='maximize')
+        study.optimize(objective, n_trials=optuna_trials)
+
+        print("Best trial:")
+        trial = study.best_trial
+
+        print("  Value: ", trial.value)
+
+        print("  Params: ")
+        for key, value in trial.params.items():
+            print("    {}: {}".format(key, value))
+
+
+	if optuna_plot == True:
+        optuna.visualization.plot_optimization_history(study)
+	    optuna.visualization.plot_slice(study)
+ 	    optuna.visualization.plot_contour(study, params=['n_estimators', 'max_depth'])
+    else:
+        objective()
+
+
 
 #?############
 #* FUNCTIONS #
@@ -637,32 +661,5 @@ def load_trained_model(args, model, tokenizer):
     return model
 
 if __name__ == "__main__":
-
-    if optunamode == True:
-        #We create an optuna study with as goal to maximize the number we put into it.
-        study = optuna.create_study(direction='maximize')
-        study.optimize(objective, n_trials=optuna_trials)
-
-        print("Best trial:")
-        trial = study.best_trial
-
-        print("  Value: ", trial.value)
-
-        print("  Params: ")
-        for key, value in trial.params.items():
-            print("    {}: {}".format(key, value))
-
-	#ADDED FILE OUTPUT
-	#f=open("optuna_out.txt","w+")
-	#f.write(trial.value)
-	#for key, value in trial.params.items():
-	   # f.write(key)
-	   # f.write(value)
-
-	#if optuna_plot == True:
-         #   optuna.visualization.plot_optimization_history(study)
-	  #  optuna.visualization.plot_slice(study)
- 	   # optuna.visualization.plot_contour(study, params=['n_estimators', 'max_depth'])
-    else:
-        objective()
+    main()
 
