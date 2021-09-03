@@ -12,7 +12,9 @@ import numpy as np
 import torch
 import torch.nn as nn
 import optuna
+import warnings
 
+from colorama import Fore
 from tqdm import tqdm, trange
 from collections import OrderedDict
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
@@ -25,6 +27,7 @@ from transformers import (
     RobertaForSequenceClassification,
     logging,
 )
+
 
 #! Imports from other python file of this module
 from utils import Config, Logger, make_log_dir
@@ -58,6 +61,8 @@ cuda_output = False
 training_output = False
 best_output = False
 
+count = 0
+
 # *hyperparameter optimizer settings
 optunamode = False
 optuna_trials = 50
@@ -83,6 +88,7 @@ elif amount_of_info == 2:
 elif amount_of_info == 3:
     logging.set_verbosity_warning
 elif amount_of_info == 4:
+    warnings.filterwarnings("ignore")
     logging.set_verbosity_error
 
 bestf1_score = 0
@@ -93,7 +99,7 @@ out = open("outputs.txt", "w")
 def main():
 
     # * INFOGRAPHIC OUTPUT
-    print("   *                        (           ")
+    print(Fore.LIGHTRED_EX + "   *                        (           ")
     print(" (  `         (    (        )\ )  *   ) ")
     print(" )\))(     (  )\ ( )\  (   (()/(` )  /( ")
     print("((_)()\   ))\((_))((_) )\   /(_))( )(_))")
@@ -101,6 +107,8 @@ def main():
     print("|  \/  |(_)) | | | _ )| __|| _ \|_   _| ")
     print("| |\/| |/ -_)| | | _ \| _| |   /  | |   ")
     print("|_|  |_|\___||_| |___/|___||_|_\  |_|   ")
+    print()
+    print(Fore.WHITE + "             OPTIMA EDITION             ")
 
     if optunamode == True:
         # We create an optuna study with as goal to maximize the number we put into it.
@@ -182,6 +190,10 @@ def main():
 def objective_manual(
     hid_layer, drop_ratio, lear_rate, num_epochs, warmup_epochs, rand_seed, ba_size
 ):
+
+    #!show how far we are
+    count += 1
+    print("iteration " + str(count))
 
     # * read configuration into config via /utils/Config.py
     config = Config(main_conf_path="./")
@@ -526,7 +538,13 @@ def train_me(
     max_result = {}
     for epoch in trange(int(args.num_train_epoch), desc="Epoch"):
         tr_loss = 0
-        for step, batch in enumerate(tqdm(train_dataloader, desc="Iteration")):
+        for step, batch in enumerate(
+            tqdm(
+                train_dataloader,
+                desc="Iteration",
+                bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.LIGHTGREEN_EX, Fore.RESET),
+            )
+        ):
             # move batch data to gpu
             batch = tuple(t.to(args.device) for t in batch)
 
@@ -678,7 +696,13 @@ def train_me_manual(
     max_result = {}
     for epoch in trange(int(train_epoch_manual), desc="Epoch"):
         tr_loss = 0
-        for step, batch in enumerate(tqdm(train_dataloader, desc="Iteration")):
+        for step, batch in enumerate(
+            tqdm(
+                train_dataloader,
+                desc="Iteration",
+                bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.LIGHTGREEN_EX, Fore.RESET),
+            )
+        ):
             # move batch data to gpu
             batch = tuple(t.to(args.device) for t in batch)
 
@@ -825,7 +849,13 @@ def run_train(
     max_result = {}
     for epoch in trange(int(args.num_train_epoch), desc="Epoch"):
         tr_loss = 0
-        for step, batch in enumerate(tqdm(train_dataloader, desc="Iteration")):
+        for step, batch in enumerate(
+            tqdm(
+                train_dataloader,
+                desc="Iteration",
+                bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.LIGHTGREEN_EX, Fore.RESET),
+            )
+        ):
             # move batch data to gpu
             batch = tuple(t.to(args.device) for t in batch)
 
@@ -930,7 +960,11 @@ def run_eval(
     pred_guids = []
     out_label_ids = None
 
-    for eval_batch in tqdm(eval_dataloader, desc="Evaluating"):
+    for eval_batch in tqdm(
+        eval_dataloader,
+        desc="Evaluating",
+        bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.LIGHTBLUE_EX, Fore.RESET),
+    ):
         eval_batch = tuple(t.to(args.device) for t in eval_batch)
 
         if args.model_type in ["MELBERT_MIP", "MELBERT"]:
@@ -1013,8 +1047,9 @@ def run_eval(
     # ? compute metrics
     result = compute_metrics(preds, out_label_ids)
 
-    for key in sorted(result.keys()):
-        logger.info(f"  {key} = {str(result[key])}")
+    #! disabled metrics for automated iterating as it only distracts and takes up space
+    # for key in sorted(result.keys()):
+    # logger.info(f"  {key} = {str(result[key])}")
 
     if return_preds:
         return preds
