@@ -16,19 +16,6 @@ import xml.etree.ElementTree as ET
 # USER INTERFACE#
 ################
 
-# globals
-verbd1 = ""
-verbd2 = ""
-verbd3 = ""
-verbd4 = ""
-verbd5 = ""
-verbd6 = ""
-verbd7 = ""
-
-temp_lemma = ""
-
-debug = True
-
 sentence_number = 0
 
 ###########
@@ -39,7 +26,7 @@ warnings.filterwarnings("ignore")
 
 def findpos(child_of_child):
 
-    #we maken een postag aan
+    # we maken een postag aan
     pos_tag = "empty"
 
     # ? Het correct taggen van werkwoorden, zelfstandige en bijvoeglijke naamwoorden.
@@ -106,15 +93,6 @@ for directory_d2_first in subdirectories:
 
     for filename in os.listdir(directory_d2):
         if filename.endswith(".xml"):
-            # print(filename)
-            # definitions are placed here so they are reset for each file
-            verbd1 = ""
-            verbd2 = ""
-            verbd3 = ""
-            verbd4 = ""
-            verbd5 = ""
-            verbd6 = ""
-            verbd7 = ""
 
             filenumber = filenumber + 1
 
@@ -144,9 +122,16 @@ for directory_d2_first in subdirectories:
                             context_counter = 1
                             context = sentence
 
-                    for smain in top:
-                        verbfound = False
+                        # ? Fix the sentence we just received
+                        # escape csv problems
+                        sentence = sentence.replace("\n", "")
+                        # sentence fixes
+                        if sentence.find(",") != -1 or sentence.find(";") != -1:
+                            sentence = '"' + sentence + '"'
+                        if sentence[0:1] == " ":
+                            sentence = sentence[1:]
 
+                    for smain in top:
                         ############
                         # MAIN LEVEL#
                         ############
@@ -157,27 +142,57 @@ for directory_d2_first in subdirectories:
 
                                 pos = findpos(child_of_child)
                                 if pos is not "empty":
-                                    
 
-                        for child in smain:
-                            if verbfound == True:
-                                rel_child = child.get("rel")
+                                    # ? Get word offset
+                                    word = child_of_child.get("word")
+                                    word_offset = sentence.rfind(word)
+
+                                    #! Calculate and write output
+                                    output = (
+                                        "COV_fragment01"
+                                        + " "
+                                        + str(sentence_number)
+                                        + "\t"
+                                        + "0"
+                                        + "\t"
+                                        + str(sentence)
+                                        + "\t"
+                                        + pos
+                                        + "\t"
+                                        + str(word_offset)
+                                    )
+                                    f.write(output + "\n")
 
                             #########
                             # LEVEL 2#
                             #########
 
-                            verbfound2 = False
                             for childx in child:
-                                kind_child = childx.get("pt")
-                                if not str(kind_child) == "None":  # empty
-                                    if kind_child.find("ww") != -1:
-                                        verbd2 = childx.get("word")
-                                        verbfound2 = True
+                                child_of_child = childx.get("postag")
+                                if not str(child_of_child) == "None":  # empty
 
-                            for childx in child:
-                                if verbfound2 == True:
-                                    rel_child = childx.get("rel")
+                                    pos = findpos(child_of_child)
+                                    if pos is not "empty":
+
+                                        # ? Get word offset
+                                        word = child_of_child.get("word")
+                                        word_offset = sentence.rfind(word)
+
+                                        #! Calculate and write output
+                                        output = (
+                                            "COV_fragment01"
+                                            + " "
+                                            + str(sentence_number)
+                                            + "\t"
+                                            + "0"
+                                            + "\t"
+                                            + str(sentence)
+                                            + "\t"
+                                            + pos
+                                            + "\t"
+                                            + str(word_offset)
+                                        )
+                                        f.write(output + "\n")
 
                                 #########
                                 # LEVEL 3#
@@ -185,16 +200,31 @@ for directory_d2_first in subdirectories:
 
                                 verbfound3 = False
                                 for childy in childx:
-                                    kind_child = childy.get("pt")
-                                    if not str(kind_child) == "None":  # empty
-                                        if kind_child.find("ww") != -1:
-                                            verbd3 = childy.get("word")
-                                            # New: add verb lemma
-                                            verbfound3 = True
+                                    child_of_child = childy.get("postag")
+                                    if not str(child_of_child) == "None":  # empty
 
-                                for childy in childx:
-                                    if verbfound3 == True:
-                                        rel_child = childy.get("rel")
+                                        pos = findpos(child_of_child)
+                                        if pos is not "empty":
+
+                                            # ? Get word offset
+                                            word = child_of_child.get("word")
+                                            word_offset = sentence.rfind(word)
+
+                                            #! Calculate and write output
+                                            output = (
+                                                "COV_fragment01"
+                                                + " "
+                                                + str(sentence_number)
+                                                + "\t"
+                                                + "0"
+                                                + "\t"
+                                                + str(sentence)
+                                                + "\t"
+                                                + pos
+                                                + "\t"
+                                                + str(word_offset)
+                                            )
+                                            f.write(output + "\n")
 
                                     #########
                                     # LEVEL 4#
@@ -265,41 +295,5 @@ for directory_d2_first in subdirectories:
                                                 for childc in childb:
                                                     if verbfound7 == True:
                                                         rel_child = childc.get("rel")
-
-            ########
-            # output#
-            ########
-
-            # escape csv problems
-            sentence = sentence.replace("\n", "")
-
-            # sentence fixes
-            if sentence.find(",") != -1 or sentence.find(";") != -1:
-                sentence = '"' + sentence + '"'
-
-            if sentence[0:1] == " ":
-                sentence = sentence[1:]
-
-            # *! ACTUAL OUTPUT
-
-            if verbd1 != "" and verbd1 != " " and verbd1 != "\n":
-                # actual output
-                word_offset = sentence.rfind(verbd1)
-
-                # ? Defining output
-                output = (
-                    "COV_fragment01"
-                    + " "
-                    + str(sentence_number)
-                    + "\t"
-                    + "0"
-                    + "\t"
-                    + str(sentence)
-                    + "\t"
-                    + "POS TAG HERE"
-                    + "\t"
-                    + str(word_offset)
-                )
-                f.write(output)
 
     f.close()
