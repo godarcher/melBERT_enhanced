@@ -234,6 +234,8 @@ def objective_manual(
             tokenizer,
             output_mode,
         )
+
+        global bestf1_score
         if best_result > bestf1_score:
             out.write(
                 "NEW BEST RESULT: "
