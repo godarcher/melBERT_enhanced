@@ -247,7 +247,7 @@ def objective_manual(
             + str(warmup_epochs)
             + "random seed:"
             + str(rand_seed)
-            + ba_size
+            + "ba_size: "
             + str(ba_size)
         )
         return best_result
@@ -982,14 +982,6 @@ def load_pretrained_model(trial, args):
         elif optuna_tweak_drop_ratio == True:
             model = AutoModelForSequenceClassification_SPV_MIP_optima_drop(
                 trial, args=args, Model=bert, config=config, num_labels=args.num_labels
-            )
-        elif manualmode == True:
-            model = AutoModelForSequenceClassification_SPV_MIP_optima_manual(
-                hid_lay,
-                args=args,
-                Model=bert,
-                config=config,
-                num_labels=args.num_labels,
             )
         else:
             model = AutoModelForSequenceClassification_SPV_MIP(
