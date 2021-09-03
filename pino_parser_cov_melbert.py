@@ -62,6 +62,28 @@ def findpos(child_of_child):
     return pos_tag
 
 
+def writeoutput(word, pos):
+    global sentence
+    # ? Get word offset
+    word_offset = sentence.rfind(word)
+
+    #! Calculate and write output
+    output = (
+        "COV_fragment01"
+        + " "
+        + str(sentence_number)
+        + "\t"
+        + "0"
+        + "\t"
+        + str(sentence)
+        + "\t"
+        + pos
+        + "\t"
+        + str(word_offset)
+    )
+    f.write(output + "\n")
+
+
 def listdirs(path):
     return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
@@ -69,6 +91,7 @@ def listdirs(path):
 ##################
 # GLOBAL VARIABLES#
 ##################
+sentence = ""
 
 filenumber = 0
 parser = etree.XMLParser(ns_clean=True, remove_comments=True)
@@ -88,10 +111,11 @@ for directory_d2_first in subdirectories:
     f = open(outputdirectory, "w", encoding="utf-8")
 
     # ? Added begin sentence of .csv file
-    f.write("index	label	sentence	POS	w_index")
+    f.write("index	label	sentence	POS	w_index" + "\n")
 
     context = ""
     context_counter = 0
+    glob_value = ""
 
     for filename in os.listdir(directory_d2):
         if filename.endswith(".xml"):
@@ -117,12 +141,6 @@ for directory_d2_first in subdirectories:
                     sent_id = top.get("sentid")
                     if not str(sent_id) == "None":
                         sentence = top.text
-                        if context_counter < 7:
-                            context = context + " " + sentence
-                            context_counter = context_counter + 1
-                        else:
-                            context_counter = 1
-                            context = sentence
 
                         # ? Fix the sentence we just received
                         # escape csv problems
@@ -144,26 +162,10 @@ for directory_d2_first in subdirectories:
 
                                 pos = findpos(child)
                                 if pos is not "empty":
-
-                                    # ? Get word offset
+                                    # get word
                                     word = child.get("word")
-                                    word_offset = sentence.rfind(word)
-
-                                    #! Calculate and write output
-                                    output = (
-                                        "COV_fragment01"
-                                        + " "
-                                        + str(sentence_number)
-                                        + "\t"
-                                        + "0"
-                                        + "\t"
-                                        + str(sentence)
-                                        + "\t"
-                                        + pos
-                                        + "\t"
-                                        + str(word_offset)
-                                    )
-                                    f.write(output + "\n")
+                                    # call output function
+                                    writeoutput(pos, word)
 
                             #########
                             # LEVEL 2#
