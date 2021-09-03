@@ -37,6 +37,38 @@ sentence_number = 0
 warnings.filterwarnings("ignore")
 
 
+def findpos(child_of_child):
+    # ? Het correct taggen van werkwoorden, zelfstandige en bijvoeglijke naamwoorden.
+    if "WW(" in child_of_child.get("pos"):
+        pos_tag = "VERB"
+    elif "N(" in child_of_child.get("pos"):
+        pos_tag = "NOUN"
+    elif "ADJ(" in child_of_child.get("pos"):
+        pos_tag = "ADJ"
+
+    # ? Het correct taggen van voornaamwoorden
+    elif "VNW(" in child_of_child.get("pos") and "adv-pron" in child_of_child.get(
+        "pos"
+    ):
+        pos_tag = "ADV"
+    elif "VNW(" in child_of_child.get("pos") and "prenom" in child_of_child.get("pos"):
+        pos_tag = "DET"
+    elif (
+        "VNW(" in child_of_child.get("pos")
+        and "pron" in child_of_child.get("pos")
+        and child_of_child.get("word").tolower() != "het"
+    ):
+        pos_tag = "PRON"
+
+    # ? Het correct taggen van bijwoorden, lidwoorden en nummers
+    elif "BW(" in child_of_child.get("pos"):
+        pos_tag = "ADV"
+    elif "LID(" in child_of_child.get("pos"):
+        pos_tag = "DET"
+    elif child_of_child.get("lem").isnumeric():
+        pos_tag = "NUM"
+
+
 def listdirs(path):
     return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
@@ -116,9 +148,11 @@ for directory_d2_first in subdirectories:
                         ############
 
                         for child in smain:
-                            kind_child = child.get("pt")
-                            if not str(kind_child) == "None":  # empty
-                                if kind_child.find("ww") != -1:
+                            child_of_child = child.get("postag")
+                            if not str(child_of_child) == "None":  # empty
+
+                                # ? NOUNS
+                                if kind_child.find("N(") != -1:
                                     verbd1 = child.get("word")
                                     verbfound = True
 
