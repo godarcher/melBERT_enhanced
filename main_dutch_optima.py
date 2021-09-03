@@ -49,14 +49,14 @@ cuda_output = False
 training_output = False
 
 #*hyperparameter optimizer settings
-optunamode = True
+optunamode = False
 optuna_trials = 50
-optuna_plot = True
+optuna_plot = False
 
 optuna_tweak_seed = False
 optuna_tweak_hidden_layers = False
 optuna_tweak_drop_ratio = False
-optuna_tweak_learning_rate = True
+optuna_tweak_learning_rate = False
 
 #?############
 #* main code #
@@ -73,6 +73,7 @@ elif amount_of_info == 4:
     logging.set_verbosity_error
 
 def main():
+
     if optunamode == True:
         #We create an optuna study with as goal to maximize the number we put into it.
         study = optuna.create_study(direction='maximize')
@@ -86,14 +87,15 @@ def main():
         print("  Params: ")
         for key, value in trial.params.items():
             print("    {}: {}".format(key, value))
-
-
-	if optuna_plot == True:
-        optuna.visualization.plot_optimization_history(study)
-	    optuna.visualization.plot_slice(study)
- 	    optuna.visualization.plot_contour(study, params=['n_estimators', 'max_depth'])
     else:
-        objective()
+        i = 1 
+        #manual mode here
+
+    if optuna_plot == True:
+        optuna.visualization.plot_optimization_history(study)
+        optuna.visualization.plot_slice(study)
+        optuna.visualization.plot_contour(study, params=['n_estimators', 'max_depth'])
+
 
 
 
