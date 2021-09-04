@@ -40,6 +40,7 @@ logger = logging.getLogger(__name__)
 
 # SETTINGS
 mode = 3  # 0 = english verb, 1 = english all pos, 2 = dutch verb, 3 = dutch allpos
+ponyland = 1  # 1 for ponyland directories, 0 for non ponyland directories
 
 
 class InputExample(object):
@@ -202,100 +203,191 @@ class VUAProcessor(DataProcessor):
         """See base class."""
 
         # ADJUSTED TO MODE VARIANT FOR EASY TWEAKING
-        if mode == 0:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUAverb\\train.tsv"
-                ),
-                "train",
-            )
-        elif mode == 1:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUA18\\train.tsv"
-                ),
-                "train",
-            )
-        elif mode == 2:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_verb\\train.tsv"
-                ),
-                "train",
-            )
-        elif mode == 3:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_all\\train.tsv"
-                ),
-                "train",
-            )
+        if ponyland == 0:
+            if mode == 0:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUAverb\\train.tsv"
+                    ),
+                    "train",
+                )
+            elif mode == 1:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUA18\\train.tsv"
+                    ),
+                    "train",
+                )
+            elif mode == 2:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_verb\\train.tsv"
+                    ),
+                    "train",
+                )
+            elif mode == 3:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_all\\train.tsv"
+                    ),
+                    "train",
+                )
+
+        elif ponyland == 1:
+            if mode == 0:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\train.tsv"
+                    ),
+                    "train",
+                )
+            elif mode == 1:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\train.tsv"
+                    ),
+                    "train",
+                )
+            elif mode == 2:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_verb\\train.tsv"
+                    ),
+                    "train",
+                )
+            elif mode == 3:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_all\\train.tsv"
+                    ),
+                    "train",
+                )
 
     def get_test_examples(self, data_dir):
         """See base class."""
 
         # ADJUSTED TO MODE VARIANT FOR EASY TWEAKING
-        if mode == 0:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUAverb\\test.tsv"
-                ),
-                "test",
-            )
-        elif mode == 1:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUA18\\test.tsv"
-                ),
-                "test",
-            )
-        elif mode == 2:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_verb\\test.tsv"
-                ),
-                "test",
-            )
-        elif mode == 3:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_all\\test.tsv"
-                ),
-                "test",
-            )
+        if ponyland == 0:
+            if mode == 0:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUAverb\\test.tsv"
+                    ),
+                    "test",
+                )
+            elif mode == 1:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUA18\\test.tsv"
+                    ),
+                    "test",
+                )
+            elif mode == 2:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_verb\\test.tsv"
+                    ),
+                    "test",
+                )
+            elif mode == 3:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_all\\test.tsv"
+                    ),
+                    "test",
+                )
+        elif ponyland == 1:
+            if mode == 0:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\test.tsv"
+                    ),
+                    "test",
+                )
+            elif mode == 1:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\test.tsv"
+                    ),
+                    "test",
+                )
+            elif mode == 2:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_verb\\test.tsv"
+                    ),
+                    "test",
+                )
+            elif mode == 3:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_all\\test.tsv"
+                    ),
+                    "test",
+                )
 
     def get_dev_examples(self, data_dir):
         """See base class."""
 
         # ADJUSTED TO MODE VARIANT FOR EASY TWEAKING
-        if mode == 0:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUAverb\\dev.tsv"
-                ),
-                "dev",
-            )
-        elif mode == 1:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUA18\\dev.tsv"
-                ),
-                "dev",
-            )
-        elif mode == 2:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_verb\\dev.tsv"
-                ),
-                "dev",
-            )
-        elif mode == 3:
-            return self._create_examples(
-                self._read_tsv(
-                    "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_all\\dev.tsv"
-                ),
-                "dev",
-            )
+        if ponyland == 1:
+            if mode == 0:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUAverb\\dev.tsv"
+                    ),
+                    "dev",
+                )
+            elif mode == 1:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\VUA18\\dev.tsv"
+                    ),
+                    "dev",
+                )
+            elif mode == 2:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_verb\\dev.tsv"
+                    ),
+                    "dev",
+                )
+            elif mode == 3:
+                return self._create_examples(
+                    self._read_tsv(
+                        "C:\\Users\\Josso\\Downloads\\MelBERT-main\\data_sample\\pasma_all\\dev.tsv"
+                    ),
+                    "dev",
+                )
+        elif ponyland == 1:
+            if mode == 0:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\dev.tsv"
+                    ),
+                    "dev",
+                )
+            elif mode == 1:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\dev.tsv"
+                    ),
+                    "dev",
+                )
+            elif mode == 2:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_verb\\dev.tsv"
+                    ),
+                    "dev",
+                )
+            elif mode == 3:
+                return self._create_examples(
+                    self._read_tsv(
+                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_all\\dev.tsv"
+                    ),
+                    "dev",
+                )
 
     def get_labels(self):
         """See base class."""
