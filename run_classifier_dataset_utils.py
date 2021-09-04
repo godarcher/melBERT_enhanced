@@ -238,7 +238,7 @@ class VUAProcessor(DataProcessor):
                 return self._create_examples(
                     self._read_tsv(
                         os.path.dirname(os.path.realpath(__file__))
-                        + "/data_sample/VUA18/train.tsv"
+                        + "/data_sample/VUAverb/train.tsv"
                     ),
                     "train",
                 )
@@ -305,7 +305,7 @@ class VUAProcessor(DataProcessor):
                 return self._create_examples(
                     self._read_tsv(
                         os.path.dirname(os.path.realpath(__file__))
-                        + "/data_sample/VUA18/test.tsv"
+                        + "/data_sample/VUAverb/test.tsv"
                     ),
                     "test",
                 )
@@ -372,7 +372,7 @@ class VUAProcessor(DataProcessor):
                 return self._create_examples(
                     self._read_tsv(
                         os.path.dirname(os.path.realpath(__file__))
-                        + "/data_sample/VUA18/dev.tsv"
+                        + "/data_sample/VUAverb/dev.tsv"
                     ),
                     "dev",
                 )
