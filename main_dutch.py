@@ -36,7 +36,7 @@ from modeling import (
     AutoModelForSequenceClassification_SPV_MIP,
 )
 from run_classifier_dataset_utils import processors, output_modes, compute_metrics
-from data_loader import load_train_data, load_train_data_kf, load_test_data
+from data_loader import load_train_data, load_train_data_kf, load_test_data, load_dev_data
 
 CONFIG_NAME = "config.json"
 WEIGHTS_NAME = "pytorch_model.bin"
@@ -49,6 +49,10 @@ ARGS_NAME = "training_args.bin"
 print_model = False
 cuda_output = False
 training_output = True
+
+evaluate_dev = True
+
+
 warnings.filterwarnings("ignore")
 
 # ?############
@@ -152,7 +156,6 @@ def main():
     args.num_labels = len(label_list)
 
     # * build tokenizer and model
-    # TODO: CHANGE FOR DUTCH
     tokenizer = RobertaTokenizer.from_pretrained(
         "pdelobelle/robbert-v2-dutch-base", do_lower_case=args.do_lower_case
     )
@@ -431,6 +434,19 @@ def run_train(
                     save_model(args, model, tokenizer)
             if args.task_name == "vua":
                 save_model(args, model, tokenizer)
+
+        # ? process dev data
+        if evaluate_dev == True:
+             all_guids, eval_dataloader = load_dev_data(
+                args,
+                logger,
+                processor,
+                task_name,
+                label_list,
+                tokenizer,
+                output_mode,
+                k,
+            )
 
     logger.info(f"-----Best Result-----")
     for key in sorted(max_result.keys()):
