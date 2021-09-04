@@ -39,7 +39,7 @@ from nltk.corpus import wordnet
 logger = logging.getLogger(__name__)
 
 # SETTINGS
-mode = 3  # 0 = english verb, 1 = english all pos, 2 = dutch verb, 3 = dutch allpos
+mode = 3  # 0 = english verb, 1 = english all pos, 2 = dutch verb, 3 = dutch allpos, 4 = english pos diff, 5 = english genre diff, 6 = dutch pos diff
 ponyland = 1  # 1 for ponyland directories, 0 for non ponyland directories
 
 
@@ -237,28 +237,32 @@ class VUAProcessor(DataProcessor):
             if mode == 0:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\train.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/VUA18/train.tsv"
                     ),
                     "train",
                 )
             elif mode == 1:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\train.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/VUA18/train.tsv"
                     ),
                     "train",
                 )
             elif mode == 2:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_verb\\train.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/pasma_verb/train.tsv"
                     ),
                     "train",
                 )
             elif mode == 3:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_all\\train.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/pasma_all/train.tsv"
                     ),
                     "train",
                 )
@@ -300,28 +304,32 @@ class VUAProcessor(DataProcessor):
             if mode == 0:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\test.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/VUA18/test.tsv"
                     ),
                     "test",
                 )
             elif mode == 1:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\test.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/VUA18/test.tsv"
                     ),
                     "test",
                 )
             elif mode == 2:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_verb\\test.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/pasma_verb/test.tsv"
                     ),
                     "test",
                 )
             elif mode == 3:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_all\\test.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/pasma_all/test.tsv"
                     ),
                     "test",
                 )
@@ -330,7 +338,7 @@ class VUAProcessor(DataProcessor):
         """See base class."""
 
         # ADJUSTED TO MODE VARIANT FOR EASY TWEAKING
-        if ponyland == 1:
+        if ponyland == 0:
             if mode == 0:
                 return self._create_examples(
                     self._read_tsv(
@@ -363,28 +371,32 @@ class VUAProcessor(DataProcessor):
             if mode == 0:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\dev.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/VUA18/dev.tsv"
                     ),
                     "dev",
                 )
             elif mode == 1:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\VUA18\\dev.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/VUA18/dev.tsv"
                     ),
                     "dev",
                 )
             elif mode == 2:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_verb\\dev.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/pasma_verb/dev.tsv"
                     ),
                     "dev",
                 )
             elif mode == 3:
                 return self._create_examples(
                     self._read_tsv(
-                        os.path.dirname(os.path.realpath(__file__)) + "\\data_sample\\pasma_all\\dev.tsv"
+                        os.path.dirname(os.path.realpath(__file__))
+                        + "/data_sample/pasma_all/dev.tsv"
                     ),
                     "dev",
                 )
