@@ -538,7 +538,7 @@ class AutoModelForSequenceClassification_SPV_MIP_optima_drop(nn.Module):
 
         self.SPV_linear = nn.Linear(config.hidden_size * 2, args.classifier_hidden)
         self.MIP_linear = nn.Linear(config.hidden_size * 2, args.classifier_hidden)
-        self.classifier = nn.Linear(hidden_layers * 2, args.classifier_hidden)
+        self.classifier = nn.Linear(args.classifier_hidden * 2, num_labels)
 
         self._init_weights(self.SPV_linear)
         self._init_weights(self.MIP_linear)
