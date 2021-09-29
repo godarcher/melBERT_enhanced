@@ -46,6 +46,8 @@ training_output = True
 
 out = open("predictions_test.txt", "w")
 devout = open("predictions_dev.txt", "w")
+outf = open("predictions_test_float.txt", "w")
+devoutf = open("predictions_dev_float.txt", "w")
 
 #?############
 #* FUNCTIONS #
@@ -119,8 +121,7 @@ def main():
     args.log_dir = log_dir
 
     # ? set CUDA devices
-    device = torch.device("cuda" if torch.cuda.is_available()
-                          and not args.no_cuda else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
     args.n_gpu = torch.cuda.device_count()
     args.device = device
 
@@ -377,23 +378,7 @@ def run_train(
             all_guids, eval_dataloader = load_test_data(
                 args, logger, processor, task_name, label_list, tokenizer, output_mode, k
             )
-            result = run_eval(args, logger, model,
-                              eval_dataloader, all_guids, task_name, False)
-            # ? Save test predictions option
-            if (save_test_pred == True):
-                predictions = run_eval(
-                    args, logger, model, eval_dataloader, all_guids, task_name, True)
-                for pred in predictions:
-                    out.write(str(pred) + "\n")
-
-            if (save_dev_pred == True):
-                all_guids, dev_dataloader = load_dev_data(
-                    args, logger, processor, task_name, label_list, tokenizer, output_mode, k
-                )
-                predictions = run_dev(
-                    args, logger, model, dev_dataloader, all_guids, task_name)
-                for pred in predictions:
-                    devout.write(str(pred) + "\n")
+            result = run_eval(args, logger, model, eval_dataloader, all_guids, task_name, False)
 
             # ? update
             if result["f1"] > max_val_f1:
@@ -403,6 +388,21 @@ def run_train(
                     save_model(args, model, tokenizer)
             if args.task_name == "vua":
                 save_model(args, model, tokenizer)
+
+        #! Call code only once!
+        if (epoch == args.num_train_epoch):
+            if (save_test_pred == True):
+                # ? Save test predictions option
+                predictions = run_eval(
+                    args, logger, model, eval_dataloader, all_guids, task_name, True)
+                for pred in predictions:
+                    out.write(str(pred) + "\n")
+            if (save_dev_pred == True):
+                all_guids, dev_dataloader = load_dev_data(args, logger, processor, task_name, label_list, tokenizer, output_mode, k)
+                predictions = run_dev(
+                    args, logger, model, dev_dataloader, all_guids, task_name)
+                for pred in predictions:
+                    devout.write(str(pred) + "\n")
 
     logger.info(f"-----Best Result-----")
     for key in sorted(max_result.keys()):
@@ -422,7 +422,7 @@ def run_dev(args, logger, model, dev_dataloader, all_guids, task_name):
     out_label_ids = None
 
     for dev_batch in tqdm(dev_dataloader, desc="Predicting", bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.LIGHTRED_EX, Fore.RESET)):
-        eval_batch = tuple(t.to(args.device) for t in eval_batch)
+        dev_batch = tuple(t.to(args.device) for t in dev_batch)
 
         if args.model_type in ["MELBERT_MIP", "MELBERT"]:
             (
@@ -434,9 +434,9 @@ def run_dev(args, logger, model, dev_dataloader, all_guids, task_name):
                 input_ids_2,
                 input_mask_2,
                 segment_ids_2,
-            ) = eval_batch
+            ) = dev_batch
         else:
-            input_ids, input_mask, segment_ids, label_ids, idx = eval_batch
+            input_ids, input_mask, segment_ids, label_ids, idx = dev_batch
 
         with torch.no_grad():
 
@@ -469,6 +469,13 @@ def run_dev(args, logger, model, dev_dataloader, all_guids, task_name):
                     )
 
     preds = preds[0]
+    
+    #? We save our decimal predictions over here.
+    predsdec = preds #We save exact numbers
+    for pred in predsdec:
+        outf.write(str(pred) + "\n")
+
+    #* Change to 0 or 1 predictions
     preds = np.argmax(preds, axis=1)
 
     return preds
