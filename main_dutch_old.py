@@ -473,10 +473,12 @@ def run_dev(args, logger, model, dev_dataloader, all_guids, task_name):
     #? We save our decimal predictions over here.
     predsdec = preds #We save exact numbers
     for pred in predsdec:
-        outf.write(str(pred) + "\n")
+        devoutf.write(str(pred) + "\n")
 
     #* Change to 0 or 1 predictions
     preds = np.argmax(preds, axis=1)
+    for predi in preds:
+        devout.write(str(predi) + "\n")
 
     return preds
 
