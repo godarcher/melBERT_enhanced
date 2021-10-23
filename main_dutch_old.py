@@ -1,6 +1,6 @@
-#?##########
-#* IMPORTS #
-#?##########
+# ?##########
+# * IMPORTS #
+# ?##########
 
 import os
 import sys
@@ -16,7 +16,14 @@ from colorama import Fore
 from tqdm import tqdm, trange
 from collections import OrderedDict
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
-from transformers import AutoTokenizer, AutoModel, AdamW, get_linear_schedule_with_warmup, RobertaTokenizer, RobertaForSequenceClassification
+from transformers import (
+    AutoTokenizer,
+    AutoModel,
+    AdamW,
+    get_linear_schedule_with_warmup,
+    RobertaTokenizer,
+    RobertaForSequenceClassification,
+)
 
 #! Imports from other python file of this module
 from utils import Config, Logger, make_log_dir
@@ -28,19 +35,24 @@ from modeling import (
     AutoModelForSequenceClassification_SPV_MIP,
 )
 from run_classifier_dataset_utils import processors, output_modes, compute_metrics
-from data_loader import load_train_data, load_train_data_kf, load_test_data, load_dev_data
+from data_loader import (
+    load_train_data,
+    load_train_data_kf,
+    load_test_data,
+    load_dev_data,
+)
 
 CONFIG_NAME = "config.json"
 WEIGHTS_NAME = "pytorch_model.bin"
 ARGS_NAME = "training_args.bin"
 
-#?###########
-#* SETTINGS #
-#?###########
+# ?###########
+# * SETTINGS #
+# ?###########
 
 print_model = False
 cuda_output = False
-save_test_pred = False
+save_test_pred = True
 save_dev_pred = True
 training_output = True
 
@@ -48,10 +60,11 @@ out = open("predictions_test.txt", "w")
 devout = open("predictions_dev.txt", "w")
 outf = open("predictions_test_float.txt", "w")
 devoutf = open("predictions_dev_float.txt", "w")
+devouts = open("predictions_dev_soft.txt", "w")
 
-#?############
-#* FUNCTIONS #
-#?############
+# ?############
+# * FUNCTIONS #
+# ?############
 
 
 def main():
@@ -84,7 +97,7 @@ def main():
 
     args = config
 
-    if (print_model == True):
+    if print_model == True:
         print(args.__dict__)
 
     # logger
@@ -121,7 +134,9 @@ def main():
     args.log_dir = log_dir
 
     # ? set CUDA devices
-    device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+    device = torch.device(
+        "cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu"
+    )
     args.n_gpu = torch.cuda.device_count()
     args.device = device
 
@@ -148,9 +163,10 @@ def main():
     args.num_labels = len(label_list)
 
     # * build tokenizer and model
-    # TODO: CHANGE FOR DUTCH
     tokenizer = RobertaTokenizer.from_pretrained(
-        "pdelobelle/robbert-v2-dutch-base", do_lower_case=args.do_lower_case)
+        "pdelobelle/robbert-v2-dutch-base", do_lower_case=args.do_lower_case
+    )
+    # TODO CHECK AUTONLP
     model = load_pretrained_model(args)
 
     #!########## Training ###########
@@ -178,7 +194,14 @@ def main():
         for k in tqdm(range(args.kfold), desc="K-fold"):
             model = load_pretrained_model(args)
             train_dataloader = load_train_data(
-                args, logger, processor, task_name, label_list, tokenizer, output_mode, k
+                args,
+                logger,
+                processor,
+                task_name,
+                label_list,
+                tokenizer,
+                output_mode,
+                k,
             )
             model, best_result = run_train(
                 args,
@@ -223,19 +246,24 @@ def main():
             orig_data_dir = args.data_dir
             for idx, target in tqdm(enumerate(targets)):
                 logger.info(
-                    f"====================== Evaluating {target} =====================")
+                    f"====================== Evaluating {target} ====================="
+                )
                 args.data_dir = os.path.join(orig_data_dir, target)
                 all_guids, eval_dataloader = load_test_data(
-                    args, logger, processor, task_name, label_list, tokenizer, output_mode
+                    args,
+                    logger,
+                    processor,
+                    task_name,
+                    label_list,
+                    tokenizer,
+                    output_mode,
                 )
-                run_eval(args, logger, model, eval_dataloader,
-                         all_guids, task_name)
+                run_eval(args, logger, model, eval_dataloader, all_guids, task_name)
         else:
             all_guids, eval_dataloader = load_test_data(
                 args, logger, processor, task_name, label_list, tokenizer, output_mode
             )
-            run_eval(args, logger, model, eval_dataloader,
-                     all_guids, task_name)
+            run_eval(args, logger, model, eval_dataloader, all_guids, task_name)
 
     #! TroFi / MOH-X (K-fold)
     elif (args.do_eval or args.do_test) and args.task_name == "trofi":
@@ -243,10 +271,18 @@ def main():
         k_result = []
         for k in tqdm(range(10), desc="K-fold"):
             all_guids, eval_dataloader = load_test_data(
-                args, logger, processor, task_name, label_list, tokenizer, output_mode, k
+                args,
+                logger,
+                processor,
+                task_name,
+                label_list,
+                tokenizer,
+                output_mode,
+                k,
             )
-            result = run_eval(args, logger, model,
-                              eval_dataloader, all_guids, task_name)
+            result = run_eval(
+                args, logger, model, eval_dataloader, all_guids, task_name
+            )
             k_result.append(result)
 
         # Calculate average result
@@ -283,11 +319,15 @@ def run_train(
     no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
     optimizer_grouped_parameters = [
         {
-            "params": [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)],
+            "params": [
+                p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
+            ],
             "weight_decay": 0.01,
         },
         {
-            "params": [p for n, p in param_optimizer if any(nd in n for nd in no_decay)],
+            "params": [
+                p for n, p in param_optimizer if any(nd in n for nd in no_decay)
+            ],
             "weight_decay": 0.0,
         },
     ]
@@ -310,8 +350,13 @@ def run_train(
     max_result = {}
     for epoch in trange(int(args.num_train_epoch), desc="Epoch"):
         tr_loss = 0
-        for step, batch in enumerate(tqdm(train_dataloader, desc="Iteration",
-                                          bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.LIGHTGREEN_EX, Fore.RESET))):
+        for step, batch in enumerate(
+            tqdm(
+                train_dataloader,
+                desc="Iteration",
+                bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.LIGHTGREEN_EX, Fore.RESET),
+            )
+        ):
             # move batch data to gpu
             batch = tuple(t.to(args.device) for t in batch)
 
@@ -336,10 +381,10 @@ def run_train(
                     token_type_ids=segment_ids,
                     attention_mask=input_mask,
                 )
-                loss_fct = nn.NLLLoss(weight=torch.Tensor(
-                    [1, args.class_weight]).to(args.device))
-                loss = loss_fct(
-                    logits.view(-1, args.num_labels), label_ids.view(-1))
+                loss_fct = nn.NLLLoss(
+                    weight=torch.Tensor([1, args.class_weight]).to(args.device)
+                )
+                loss = loss_fct(logits.view(-1, args.num_labels), label_ids.view(-1))
             elif args.model_type in ["MELBERT_MIP", "MELBERT"]:
                 logits = model(
                     input_ids,
@@ -350,10 +395,10 @@ def run_train(
                     token_type_ids=segment_ids,
                     attention_mask=input_mask,
                 )
-                loss_fct = nn.NLLLoss(weight=torch.Tensor(
-                    [1, args.class_weight]).to(args.device))
-                loss = loss_fct(
-                    logits.view(-1, args.num_labels), label_ids.view(-1))
+                loss_fct = nn.NLLLoss(
+                    weight=torch.Tensor([1, args.class_weight]).to(args.device)
+                )
+                loss = loss_fct(logits.view(-1, args.num_labels), label_ids.view(-1))
 
             # * average loss if on multi-gpu.
             if args.n_gpu > 1:
@@ -376,9 +421,18 @@ def run_train(
         # ? evaluate
         if args.do_eval:
             all_guids, eval_dataloader = load_test_data(
-                args, logger, processor, task_name, label_list, tokenizer, output_mode, k
+                args,
+                logger,
+                processor,
+                task_name,
+                label_list,
+                tokenizer,
+                output_mode,
+                k,
             )
-            result = run_eval(args, logger, model, eval_dataloader, all_guids, task_name, False)
+            result = run_eval(
+                args, logger, model, eval_dataloader, all_guids, task_name, False
+            )
 
             # ? update
             if result["f1"] > max_val_f1:
@@ -390,25 +444,38 @@ def run_train(
                 save_model(args, model, tokenizer)
 
         #! Call code only once!
-        if (epoch == args.num_train_epoch):
-            if (save_test_pred == True):
+        if epoch == args.num_train_epoch - 1:
+            if save_test_pred == True:
                 # ? Save test predictions option
                 predictions = run_eval(
-                    args, logger, model, eval_dataloader, all_guids, task_name, True)
+                    args, logger, model, eval_dataloader, all_guids, task_name, True
+                )
                 for pred in predictions:
                     out.write(str(pred) + "\n")
-            if (save_dev_pred == True):
-                all_guids, dev_dataloader = load_dev_data(args, logger, processor, task_name, label_list, tokenizer, output_mode, k)
+            if save_dev_pred == True:
+                all_guids, dev_dataloader = load_dev_data(
+                    args,
+                    logger,
+                    processor,
+                    task_name,
+                    label_list,
+                    tokenizer,
+                    output_mode,
+                    k,
+                )
                 predictions = run_dev(
-                    args, logger, model, dev_dataloader, all_guids, task_name)
-                for pred in predictions:
-                    devout.write(str(pred) + "\n")
+                    args, logger, model, dev_dataloader, all_guids, task_name
+                )
 
     logger.info(f"-----Best Result-----")
     for key in sorted(max_result.keys()):
         logger.info(f"  {key} = {str(max_result[key])}")
 
     return model, max_result
+
+
+def sigmoid(X):
+    return 1 / (1 + np.exp(-X))
 
 
 def run_dev(args, logger, model, dev_dataloader, all_guids, task_name):
@@ -421,7 +488,11 @@ def run_dev(args, logger, model, dev_dataloader, all_guids, task_name):
     pred_guids = []
     out_label_ids = None
 
-    for dev_batch in tqdm(dev_dataloader, desc="Predicting", bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.LIGHTRED_EX, Fore.RESET)):
+    for dev_batch in tqdm(
+        dev_dataloader,
+        desc="Predicting",
+        bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.LIGHTRED_EX, Fore.RESET),
+    ):
         dev_batch = tuple(t.to(args.device) for t in dev_batch)
 
         if args.model_type in ["MELBERT_MIP", "MELBERT"]:
@@ -437,7 +508,7 @@ def run_dev(args, logger, model, dev_dataloader, all_guids, task_name):
             ) = dev_batch
         else:
             input_ids, input_mask, segment_ids, label_ids, idx = dev_batch
-
+        print(label_ids)
         with torch.no_grad():
 
             if args.model_type in ["MELBERT_MIP", "MELBERT"]:
@@ -452,7 +523,8 @@ def run_dev(args, logger, model, dev_dataloader, all_guids, task_name):
                 )
                 loss_fct = nn.NLLLoss()
                 tmp_eval_loss = loss_fct(
-                    logits.view(-1, args.num_labels), label_ids.view(-1))
+                    logits.view(-1, args.num_labels), label_ids.view(-1)
+                )
                 eval_loss += tmp_eval_loss.mean().item()
                 nb_eval_steps += 1
 
@@ -462,28 +534,35 @@ def run_dev(args, logger, model, dev_dataloader, all_guids, task_name):
                     out_label_ids = label_ids.detach().cpu().numpy()
                 else:
                     preds[0] = np.append(
-                        preds[0], logits.detach().cpu().numpy(), axis=0)
+                        preds[0], logits.detach().cpu().numpy(), axis=0
+                    )
                     pred_guids[0].extend([all_guids[i] for i in idx])
                     out_label_ids = np.append(
                         out_label_ids, label_ids.detach().cpu().numpy(), axis=0
                     )
 
     preds = preds[0]
-    
-    #? We save our decimal predictions over here.
-    predsdec = preds #We save exact numbers
+    # ? We save our decimal predictions over here.
+    predsdec = preds  # We save exact numbers
     for pred in predsdec:
         devoutf.write(str(pred) + "\n")
 
-    #* Change to 0 or 1 predictions
+    # * change to 0 or 1 predictions
     preds = np.argmax(preds, axis=1)
+
     for predi in preds:
         devout.write(str(predi) + "\n")
+
+    predssof = sigmoid(predsdec)
+    for predo in predssof:
+        devouts.write(str(predo) + "\n")
 
     return preds
 
 
-def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_preds=False):
+def run_eval(
+    args, logger, model, eval_dataloader, all_guids, task_name, return_preds=False
+):
     model.eval()
 
     eval_loss = 0
@@ -492,7 +571,11 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
     pred_guids = []
     out_label_ids = None
 
-    for eval_batch in tqdm(eval_dataloader, desc="Evaluating", bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.LIGHTBLUE_EX, Fore.RESET)):
+    for eval_batch in tqdm(
+        eval_dataloader,
+        desc="Evaluating",
+        bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.LIGHTBLUE_EX, Fore.RESET),
+    ):
         eval_batch = tuple(t.to(args.device) for t in eval_batch)
 
         if args.model_type in ["MELBERT_MIP", "MELBERT"]:
@@ -520,7 +603,8 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
                 )
                 loss_fct = nn.NLLLoss()
                 tmp_eval_loss = loss_fct(
-                    logits.view(-1, args.num_labels), label_ids.view(-1))
+                    logits.view(-1, args.num_labels), label_ids.view(-1)
+                )
                 eval_loss += tmp_eval_loss.mean().item()
                 nb_eval_steps += 1
 
@@ -530,7 +614,8 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
                     out_label_ids = label_ids.detach().cpu().numpy()
                 else:
                     preds[0] = np.append(
-                        preds[0], logits.detach().cpu().numpy(), axis=0)
+                        preds[0], logits.detach().cpu().numpy(), axis=0
+                    )
                     pred_guids[0].extend([all_guids[i] for i in idx])
                     out_label_ids = np.append(
                         out_label_ids, label_ids.detach().cpu().numpy(), axis=0
@@ -548,7 +633,8 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
                 )
                 loss_fct = nn.NLLLoss()
                 tmp_eval_loss = loss_fct(
-                    logits.view(-1, args.num_labels), label_ids.view(-1))
+                    logits.view(-1, args.num_labels), label_ids.view(-1)
+                )
                 eval_loss += tmp_eval_loss.mean().item()
                 nb_eval_steps += 1
 
@@ -558,7 +644,8 @@ def run_eval(args, logger, model, eval_dataloader, all_guids, task_name, return_
                     out_label_ids = label_ids.detach().cpu().numpy()
                 else:
                     preds[0] = np.append(
-                        preds[0], logits.detach().cpu().numpy(), axis=0)
+                        preds[0], logits.detach().cpu().numpy(), axis=0
+                    )
                     pred_guids[0].extend([all_guids[i] for i in idx])
                     out_label_ids = np.append(
                         out_label_ids, label_ids.detach().cpu().numpy(), axis=0
