@@ -302,7 +302,7 @@ def load_dev_data(
         all_segment_ids_2 = torch.tensor(
             [f.segment_ids_2 for f in dev_features], dtype=torch.long
         )
-        eval_data = TensorDataset(
+        dev_data = TensorDataset(
             all_input_ids,
             all_input_mask,
             all_segment_ids,
