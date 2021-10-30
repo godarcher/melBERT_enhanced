@@ -40,19 +40,44 @@ with open(nrc_path, 'w') as filecovr:
 # For all files in data path
 for filename in os.listdir(data_path):
     # If filename contains .txt and is metadata
-    if filename.endswith(".txt") and filename.find("meta") != -1:
+    if filename.endswith(".txt") and filename.find("meta") != -1 and filename.find("metadata") == -1:
         # open file and read contents to string
         file_path = data_path + "\\" + filename
         # open the file with read permission
         with open(file_path, 'r', encoding='utf-8') as file:
             # We replace the newlines and make it lowercase
             data = file.read().replace('\n', '').lower()
+
             # +8 for length of "Length: "
             words_index = data.find("length:") + 8
             # this won't deliver problems because length is early in metadata
             words_end_index = data.find("words") - 1
             # cast to int to be able to do math with it
             words = int(data[words_index:words_end_index])
+
+            # +8 for length of "Auteur: "
+            auteur_index = data.find("auteur:") + 8
+            auteur_end_index = 0
+            auteur = ""
+
+            if auteur_index != 7:
+                # this won't deliver problems because length is early in metadata
+                auteur_end_index = data.find("locatie") - 2
+                # get actual metadata
+                auteur = data[auteur_index:auteur_end_index]
+            else:
+                auteur_index = data.find("byline:") + 7
+                if auteur_index != 6:
+                    # this won't deliver problems because length is early in metadata
+                    auteur_end_index = data.find("locatie") - 2
+                    # get actual metadata
+                    auteur = data[auteur_index:auteur_end_index]
+                else:
+                    auteur = "onbekend"
+
+            #print(str(auteur_index) + "\n")
+            #print(str(auteur_end_index) + "\n")
+            #print(str(auteur) + "\n")
 
             # check where the krant is from
             if filename.find("AD") != -1:
