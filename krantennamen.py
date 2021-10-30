@@ -4,6 +4,7 @@
 #?IMPORT SETTINGS#
 #*################
 import os
+import io
 from pathlib import Path
 
 #*#########
@@ -42,6 +43,11 @@ with open(nrc_path, 'w') as filecovr:
     filecovr.write("auteur;sectie;bladzijde;woorden;datum" + "\n")
     filecovr.close()
 
+nrcfile = io.open(nrc_path, "a", encoding="utf-8")
+telegraaffile = io.open(telegraaf_path, "a", encoding="utf-8")
+adfile = io.open(ad_path, "a", encoding="utf-8")
+trouwfile = io.open(trouw_path, "a", encoding="utf-8")
+volkskrantfile = io.open(volkskrant_path, "a", encoding="utf-8")
 
 # For all files in data path
 for filename in os.listdir(data_path):
@@ -104,8 +110,8 @@ for filename in os.listdir(data_path):
                     filecovr.close()
             elif filename.find("NRC") != -1:
                 with open(nrc_path, 'a') as filecovr:
-                    filecovr.write(auteur + ";" + section +
-                                   ";" + str(words) + ";" + datum + "\n")
+                    filecovr.write((auteur + ";" + section +
+                                   ";" + str(words) + ";" + datum + "\n").encode('utf8'))
                     filecovr.close()
             elif filename.find("TELEGRAAF") != -1:
                 with open(telegraaf_path, 'a') as filecovr:
