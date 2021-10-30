@@ -75,9 +75,10 @@ for filename in os.listdir(data_path):
                 else:
                     auteur = "onbekend"
 
-            #print(str(auteur_index) + "\n")
-            #print(str(auteur_end_index) + "\n")
-            #print(str(auteur) + "\n")
+            # +8 for length of "Datum: "
+            datum_index = data.find("datum:") + 7
+            datum_end_index = data.find("section") - 2
+            datum = data[datum_index:datum_end_index]
 
             # check where the krant is from
             if filename.find("AD") != -1:
