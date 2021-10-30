@@ -27,19 +27,19 @@ volkskrant_path = data_path + "\\" + "auteur_volkskrant.csv"
 
 # reset all files
 with open(telegraaf_path, 'w') as filecovr:
-    filecovr.write("auteur,sectie,woorden,datum")
+    filecovr.write("auteur;sectie;bladzijde;woorden;datum" + "\n")
     filecovr.close()
 with open(ad_path, 'w') as filecovr:
-    filecovr.write("auteur,sectie,woorden,datum")
+    filecovr.write("auteur;sectie;bladzijde;woorden;datum" + "\n")
     filecovr.close()
 with open(trouw_path, 'w') as filecovr:
-    filecovr.write("auteur,sectie,woorden,datum")
+    filecovr.write("auteur;sectie;bladzijde;woorden;datum" + "\n")
     filecovr.close()
 with open(volkskrant_path, 'w') as filecovr:
-    filecovr.write("auteur,sectie,woorden,datum")
+    filecovr.write("auteur;sectie;bladzijde;woorden;datum" + "\n")
     filecovr.close()
 with open(nrc_path, 'w') as filecovr:
-    filecovr.write("auteur,sectie,woorden,datum")
+    filecovr.write("auteur;sectie;bladzijde;woorden;datum" + "\n")
     filecovr.close()
 
 
@@ -76,8 +76,13 @@ for filename in os.listdir(data_path):
                 if auteur_index != 6:
                     # this won't deliver problems because length is early in metadata
                     auteur_end_index = data.find("locatie") - 2
-                    # get actual metadata
-                    auteur = data[auteur_index:auteur_end_index]
+
+                    if (auteur_end_index != -3):
+                        # get actual metadata
+                        auteur = data[auteur_index:auteur_end_index]
+                    else:
+                        auteur_end_index = data.find("dateline") - 2
+                        auteur = data[auteur_index:auteur_end_index]
                 else:
                     auteur = "onbekend"
 
@@ -94,26 +99,26 @@ for filename in os.listdir(data_path):
             # check where the krant is from
             if filename.find("AD") != -1:
                 with open(ad_path, 'a') as filecovr:
-                    filecovr.write(auteur + "," + section +
-                                   "," + str(words) + "," + datum + "\n")
+                    filecovr.write(auteur + ";" + section +
+                                   ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("NRC") != -1:
                 with open(nrc_path, 'a') as filecovr:
-                    filecovr.write(auteur + "," + section +
-                                   "," + str(words) + "," + datum + "\n")
+                    filecovr.write(auteur + ";" + section +
+                                   ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("TELEGRAAF") != -1:
                 with open(telegraaf_path, 'a') as filecovr:
-                    filecovr.write(auteur + "," + section +
-                                   "," + str(words) + "," + datum + "\n")
+                    filecovr.write(auteur + ";" + section +
+                                   ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("VOLKSKRANT") != -1:
                 with open(volkskrant_path, 'a') as filecovr:
-                    filecovr.write(auteur + "," + section +
-                                   "," + str(words) + "," + datum + "\n")
+                    filecovr.write(auteur + ";" + section +
+                                   ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("TROUW") != -1:
                 with open(trouw_path, 'a') as filecovr:
-                    filecovr.write(auteur + "," + section +
-                                   "," + str(words) + "," + datum + "\n")
+                    filecovr.write(auteur + ";" + section +
+                                   ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
