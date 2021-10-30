@@ -80,6 +80,11 @@ for filename in os.listdir(data_path):
             datum_end_index = data.find("section") - 2
             datum = data[datum_index:datum_end_index]
 
+            # +9 for length of "Section: "
+            section_index = data.find("section:") + 9
+            section_end_index = data.find("length") - 2
+            section = data[section_index:section_end_index]
+
             # check where the krant is from
             if filename.find("AD") != -1:
                 i = 1
