@@ -27,15 +27,21 @@ volkskrant_path = data_path + "\\" + "auteur_volkskrant.csv"
 
 # reset all files
 with open(telegraaf_path, 'w') as filecovr:
+    filecovr.write("auteur,sectie,woorden,datum")
     filecovr.close()
 with open(ad_path, 'w') as filecovr:
+    filecovr.write("auteur,sectie,woorden,datum")
     filecovr.close()
 with open(trouw_path, 'w') as filecovr:
+    filecovr.write("auteur,sectie,woorden,datum")
     filecovr.close()
 with open(volkskrant_path, 'w') as filecovr:
+    filecovr.write("auteur,sectie,woorden,datum")
     filecovr.close()
 with open(nrc_path, 'w') as filecovr:
+    filecovr.write("auteur,sectie,woorden,datum")
     filecovr.close()
+
 
 # For all files in data path
 for filename in os.listdir(data_path):
@@ -87,12 +93,27 @@ for filename in os.listdir(data_path):
 
             # check where the krant is from
             if filename.find("AD") != -1:
-                i = 1
+                with open(ad_path, 'a') as filecovr:
+                    filecovr.write(auteur + "," + section +
+                                   "," + str(words) + "," + datum + "\n")
+                    filecovr.close()
             elif filename.find("NRC") != -1:
-                i = 1
+                with open(nrc_path, 'a') as filecovr:
+                    filecovr.write(auteur + "," + section +
+                                   "," + str(words) + "," + datum + "\n")
+                    filecovr.close()
             elif filename.find("TELEGRAAF") != -1:
-                i = 1
+                with open(telegraaf_path, 'a') as filecovr:
+                    filecovr.write(auteur + "," + section +
+                                   "," + str(words) + "," + datum + "\n")
+                    filecovr.close()
             elif filename.find("VOLKSKRANT") != -1:
-                i = 1
+                with open(volkskrant_path, 'a') as filecovr:
+                    filecovr.write(auteur + "," + section +
+                                   "," + str(words) + "," + datum + "\n")
+                    filecovr.close()
             elif filename.find("TROUW") != -1:
-                i = 1
+                with open(trouw_path, 'a') as filecovr:
+                    filecovr.write(auteur + "," + section +
+                                   "," + str(words) + "," + datum + "\n")
+                    filecovr.close()
