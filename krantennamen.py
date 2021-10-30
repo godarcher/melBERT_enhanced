@@ -43,14 +43,25 @@ for filename in os.listdir(data_path):
     if filename.endswith(".txt") and filename.find("meta") != -1:
         # open file and read contents to string
         file_path = data_path + "\\" + filename
+        # open the file with read permission
+        with open(file_path, 'r', encoding='utf-8') as file:
+            # We replace the newlines and make it lowercase
+            data = file.read().replace('\n', '').lower()
+            # +8 for length of "Length: "
+            words_index = data.find("length:") + 8
+            # this won't deliver problems because length is early in metadata
+            words_end_index = data.find("words") - 1
+            # cast to int to be able to do math with it
+            words = int(data[words_index:words_end_index])
 
-        # check where the krant is from
-        if filename.find("AD") != -1:
-
-        elif filename.find("NRC") != -1:
-
-        elif filename.find("TELEGRAAF") != -1:
-
-        elif filename.find("VOLKSKRANT") != -1:
-
-        elif filename.find("TROUW") != -1:
+            # check where the krant is from
+            if filename.find("AD") != -1:
+                i = 1
+            elif filename.find("NRC") != -1:
+                i = 1
+            elif filename.find("TELEGRAAF") != -1:
+                i = 1
+            elif filename.find("VOLKSKRANT") != -1:
+                i = 1
+            elif filename.find("TROUW") != -1:
+                i = 1
