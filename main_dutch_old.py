@@ -52,7 +52,7 @@ ARGS_NAME = "training_args.bin"
 
 print_model = False
 cuda_output = False
-save_test_pred = True
+save_test_pred = False
 save_dev_pred = True
 training_output = True
 
@@ -61,6 +61,8 @@ devout = open("predictions_dev.txt", "w")
 outf = open("predictions_test_float.txt", "w")
 devoutf = open("predictions_dev_float.txt", "w")
 devouts = open("predictions_dev_soft.txt", "w")
+wrongtests = open("wrong_tests.txt", "w")
+wrongdevs = open("wrong_devs.txt", "w")
 
 # ?############
 # * FUNCTIONS #
@@ -163,10 +165,10 @@ def main():
     args.num_labels = len(label_list)
 
     # * build tokenizer and model
+    # TODO: CHANGE FOR DUTCH
     tokenizer = RobertaTokenizer.from_pretrained(
         "pdelobelle/robbert-v2-dutch-base", do_lower_case=args.do_lower_case
     )
-    # TODO CHECK AUTONLP
     model = load_pretrained_model(args)
 
     #!########## Training ###########
@@ -486,6 +488,7 @@ def run_dev(args, logger, model, dev_dataloader, all_guids, task_name):
     nb_eval_steps = 0
     preds = []
     pred_guids = []
+    numbers = []
     out_label_ids = None
 
     for dev_batch in tqdm(
@@ -508,7 +511,6 @@ def run_dev(args, logger, model, dev_dataloader, all_guids, task_name):
             ) = dev_batch
         else:
             input_ids, input_mask, segment_ids, label_ids, idx = dev_batch
-        print(label_ids)
         with torch.no_grad():
 
             if args.model_type in ["MELBERT_MIP", "MELBERT"]:
