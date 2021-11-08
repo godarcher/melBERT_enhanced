@@ -41,6 +41,7 @@ logger = logging.getLogger(__name__)
 # SETTINGS
 mode = 3  # 0 = english verb, 1 = english all pos, 2 = dutch verb, 3 = dutch allpos, 4 = english pos diff, 5 = english genre diff, 6 = dutch pos diff
 ponyland = 1  # 1 for ponyland directories, 0 for non ponyland directories
+wrong_examples = 0
 
 
 class InputExample(object):
@@ -183,6 +184,9 @@ class TrofiProcessor(DataProcessor):
             POS = line[3]
             FGPOS = line[4]
             index = line[-1]
+            print(text_a)
+            print(POS)
+            print(index)
             examples.append(
                 InputExample(
                     guid=guid,
@@ -732,6 +736,9 @@ def convert_examples_to_two_features(
 
                 # CASE OF SINGLETON SET
                 if len(tokens_b) == 1:
+                    global wrong_examples
+                    wrong_examples = wrong_examples + 1
+                    print(ex_index)
                     if warning_given == False:
                         print("WARNING: Integer converted to singleton list found")
                         warning_given = True
