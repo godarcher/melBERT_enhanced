@@ -48,11 +48,12 @@ SYSTEM_AUTHOR = "Joost Grunwald"
 
 SYSTEM_AFFILIATION = "Radboud Universiteit Nijmegen"
 
-#TODO, what should we put here?
+#TODO:, what should we put here?
 SYSTEM_URL = "http://www.let.rug.nl/vannoord/alp/Alpino/"
 
 SYSTEM_EMAIL = "s1057493@science.ru.nl"
 
+#TODO:, what license do we want?
 SYSTEM_LICENSE = "GNU Lesser General Public License v2.1"
 
 INTERFACEOPTIONS = "centercover,coverheight100"
@@ -71,6 +72,7 @@ FLATURL = None
 SWITCHBOARD_FORWARD_URL = None
 FROG_FORWARD_URL = None
 
+#find the alpino environment
 if 'ALPINO_HOME' in os.environ:
     ALPINO_HOME = os.environ['ALPINO_HOME']
 
@@ -168,8 +170,6 @@ PROFILES = [
 #
 COMMAND = WRAPPERDIR + "/alpino_wrapper.py $DATAFILE $STATUSFILE $OUTPUTDIRECTORY " + ALPINO_HOME
 
-#COMMAND = None   #Set to none if you only use the action paradigm
-
 # ======== PARAMETER DEFINITIONS ===========
 
 #The global parameters (for the project paradigm) are subdivided into several
@@ -177,16 +177,6 @@ COMMAND = WRAPPERDIR + "/alpino_wrapper.py $DATAFILE $STATUSFILE $OUTPUTDIRECTOR
 #are a list of instances from common/parameters.py
 
 PARAMETERS = []
-
-#PARAMETERS =  [
-#    ('Alpino Parameters', [
-#        #BooleanParameter(id='veryfast',name='Very fast',description='Improves the speed of the parser, returns only the first (best) analysis.'),
-#        #BooleanParameter(id='slow',name='slow',description='Provide all possible parses'),
-#        #ChoiceParameter(id='casesensitive',name='Case Sensitivity',description='Enable case sensitive behaviour?', choices=['yes','no'],default='no'),
-#       #StringParameter(id='author',name='Author',description='Sign output metadata with the specified author name',maxlength=255),
-#    ] )
-#]
-
 
 # ======= ACTIONS =============
 
@@ -196,10 +186,7 @@ PARAMETERS = []
 #for commands is equal to those of COMMAND above, any file or project specific
 #variables are not available though, so there is no $DATAFILE, $STATUSFILE, $INPUTDIRECTORY, $OUTPUTDIRECTORY or $PROJECT.
 
-ACTIONS = [
-    #Action(id='multiply',name='Multiply',parameters=[IntegerParameter(id='x',name='Value'),IntegerParameter(id='y',name='Multiplier'), command=sys.path[0] + "/actions/multiply.sh $PARAMETERS" ])
-    #Action(id='multiply',name='Multiply',parameters=[IntegerParameter(id='x',name='Value'),IntegerParameter(id='y',name='Multiplier'), function=lambda x,y: x*y ])
-]
+ACTIONS = []
 
 
 # ======== DISPATCHING (ADVANCED! YOU CAN SAFELY SKIP THIS!) ========
