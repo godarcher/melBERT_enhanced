@@ -60,6 +60,11 @@ for filename in os.listdir(data_path):
             # We replace the newlines and make it lowercase
             data = file.read().replace('\n', '').lower()
 
+            # +7 for length of "Title: "
+            title_index = data.find("title:") + 7
+            title_end_index = data.find("Bron:") - 2
+            title = data[title_index:title_end_index]
+
             # +8 for length of "Length: "
             words_index = data.find("length:") + 8
             # this won't deliver problems because length is early in metadata
