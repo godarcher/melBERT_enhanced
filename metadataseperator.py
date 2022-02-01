@@ -598,6 +598,11 @@ for file in os.listdir(directory):
               f = open(directory_out + "\\" + filename_meta, "w", encoding="utf8")
               counter = 0
 
+              #title
+              if title != "":
+                   f.write(str(title))
+              counter = counter + 1
+              
               #source
               if source != "":
                    if source.find("\n") == -1:
