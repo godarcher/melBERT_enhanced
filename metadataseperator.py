@@ -596,10 +596,12 @@ for file in os.listdir(directory):
               filename_meta = filename.replace(".txt","")
               filename_meta = filename_meta + "_meta.txt"
               f = open(directory_out + "\\" + filename_meta, "w", encoding="utf8")
-              counter = 0
+              counter = 1
 
               #title
               if title != "":
+                   if title.find("\n") == -1:
+                        title = title + "\n"
                    f.write(str(counter) + " Titel: " + str(title))
               counter = counter + 1
               
