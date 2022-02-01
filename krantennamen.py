@@ -110,26 +110,26 @@ for filename in os.listdir(data_path):
             # check where the krant is from
             if filename.find("AD") != -1:
                 with open(ad_path, 'a') as filecovr:
-                    filecovr.write(auteur + ";" + section +
+                    filecovr.write(title + ";" + auteur + ";" + section +
                                    ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("NRC") != -1:
                 with open(nrc_path, 'a') as filecovr:
-                    filecovr.write((auteur + ";" + section +
+                    filecovr.write((title + ";" + auteur + ";" + section +
                                    ";" + str(words) + ";" + datum + "\n").encode('utf8'))
                     filecovr.close()
             elif filename.find("TELEGRAAF") != -1:
                 with open(telegraaf_path, 'a') as filecovr:
-                    filecovr.write(auteur + ";" + section +
+                    filecovr.write(title + ";" + auteur + ";" + section +
                                    ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("VOLKSKRANT") != -1:
                 with open(volkskrant_path, 'a') as filecovr:
-                    filecovr.write(auteur + ";" + section +
+                    filecovr.write(title + ";" + auteur + ";" + section +
                                    ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("TROUW") != -1:
                 with open(trouw_path, 'a') as filecovr:
-                    filecovr.write(auteur + ";" + section +
+                    filecovr.write(title + ";" + auteur + ";" + section +
                                    ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
