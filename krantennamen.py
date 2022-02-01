@@ -28,19 +28,19 @@ volkskrant_path = data_path + "\\" + "auteur_volkskrant.csv"
 
 # reset all files
 with open(telegraaf_path, 'w') as filecovr:
-    filecovr.write("auteur;sectie;bladzijde;woorden;datum" + "\n")
+    filecovr.write("titel;auteur;sectie;bladzijde;woorden;datum" + "\n")
     filecovr.close()
 with open(ad_path, 'w') as filecovr:
-    filecovr.write("auteur;sectie;bladzijde;woorden;datum" + "\n")
+    filecovr.write("titel;auteur;sectie;bladzijde;woorden;datum" + "\n")
     filecovr.close()
 with open(trouw_path, 'w') as filecovr:
-    filecovr.write("auteur;sectie;bladzijde;woorden;datum" + "\n")
+    filecovr.write("titel;auteur;sectie;bladzijde;woorden;datum" + "\n")
     filecovr.close()
 with open(volkskrant_path, 'w') as filecovr:
-    filecovr.write("auteur;sectie;bladzijde;woorden;datum" + "\n")
+    filecovr.write("titel;auteur;sectie;bladzijde;woorden;datum" + "\n")
     filecovr.close()
 with open(nrc_path, 'w') as filecovr:
-    filecovr.write("auteur;sectie;bladzijde;woorden;datum" + "\n")
+    filecovr.write("titel;auteur;sectie;bladzijde;woorden;datum" + "\n")
     filecovr.close()
 
 nrcfile = io.open(nrc_path, "a", encoding="utf-8")
@@ -61,9 +61,9 @@ for filename in os.listdir(data_path):
             data = file.read().replace('\n', '').lower()
 
             # +7 for length of "Title: "
-            title_index = data.find("title:") + 7
-            title_end_index = data.find("Bron:") - 2
-            title = data[title_index:title_end_index]
+            title_index = data.find("title:") + 10
+            title_end_index = data.find("bron:") - 2
+            title = str(data[title_index:title_end_index])
 
             # +8 for length of "Length: "
             words_index = data.find("length:") + 8
@@ -114,9 +114,9 @@ for filename in os.listdir(data_path):
                                    ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("NRC") != -1:
-                with open(nrc_path, 'a') as filecovr:
-                    filecovr.write((title + ";" + auteur + ";" + section +
-                                   ";" + str(words) + ";" + datum + "\n").encode('utf8'))
+                with open(nrc_path, 'a', encoding="utf-8") as filecovr:
+                    filecovr.write(title + ";" + auteur + ";" + section +
+                                   ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("TELEGRAAF") != -1:
                 with open(telegraaf_path, 'a') as filecovr:
