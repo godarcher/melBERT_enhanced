@@ -600,7 +600,7 @@ for file in os.listdir(directory):
 
               #title
               if title != "":
-                   f.write(str(title))
+                   f.write(str(counter) + " Titel: " + str(title))
               counter = counter + 1
               
               #source
