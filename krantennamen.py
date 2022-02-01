@@ -63,7 +63,7 @@ for filename in os.listdir(data_path):
             # +7 for length of "Title: "
             title_index = data.find("title:") + 10
             title_end_index = data.find("bron:") - 2
-            title = str(data[title_index:title_end_index])
+            title = str(data[title_index:title_end_index]).replace(";","")
 
             # +8 for length of "Length: "
             words_index = data.find("length:") + 8
@@ -81,7 +81,7 @@ for filename in os.listdir(data_path):
                 # this won't deliver problems because length is early in metadata
                 auteur_end_index = data.find("locatie") - 2
                 # get actual metadata
-                auteur = data[auteur_index:auteur_end_index]
+                auteur = data[auteur_index:auteur_end_index].replace(";","")
             else:
                 auteur_index = data.find("byline:") + 7
                 if auteur_index != 6:
@@ -90,22 +90,22 @@ for filename in os.listdir(data_path):
 
                     if (auteur_end_index != -3):
                         # get actual metadata
-                        auteur = data[auteur_index:auteur_end_index]
+                        auteur = data[auteur_index:auteur_end_index].replace(";","")
                     else:
                         auteur_end_index = data.find("dateline") - 2
-                        auteur = data[auteur_index:auteur_end_index]
+                        auteur = data[auteur_index:auteur_end_index].replace(";","")
                 else:
                     auteur = "onbekend"
 
             # +8 for length of "Datum: "
             datum_index = data.find("datum:") + 7
             datum_end_index = data.find("section") - 2
-            datum = data[datum_index:datum_end_index]
+            datum = data[datum_index:datum_end_index].replace(";","")
 
             # +9 for length of "Section: "
             section_index = data.find("section:") + 9
             section_end_index = data.find("length") - 2
-            section = data[section_index:section_end_index]
+            section = data[section_index:section_end_index].replace(";","")
 
             # check where the krant is from
             if filename.find("AD") != -1:
@@ -115,7 +115,7 @@ for filename in os.listdir(data_path):
                     filecovr.close()
             elif filename.find("NRC") != -1:
                 with open(nrc_path, 'a', encoding="utf-8") as filecovr:
-                    filecovr.write(title + ";" + auteur + ";" + section +
+                    filecovr.write(title + ";" + auteur[1:] + ";" + section +
                                    ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("TELEGRAAF") != -1:
