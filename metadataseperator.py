@@ -43,6 +43,16 @@ print("")
 print("This program extracts metadata from NexisUni .txt batches")
 print("meta_extractor.titlemode = " + str(titlemode))
 
+###########
+#FUNCTIONS#
+###########
+def find_nth(haystack, needle, n):
+    start = haystack.find(needle)
+    while start >= 0 and n > 1:
+        start = haystack.find(needle, start+len(needle))
+        n -= 1
+    return start
+
 ###############
 #global values#
 ###############
@@ -413,6 +423,7 @@ for file in os.listdir(directory):
          #########################
 
          #we define our metadata values
+         title = ""
          date = ""
          section = ""
          length = ""
@@ -526,6 +537,14 @@ for file in os.listdir(directory):
                line = fp.readline()
 
          fp.close()
+
+         start_index_title = find_nth(fulltext, "\n", 1)
+         end_index_title = find_nth(fulltext, "\n", 2)
+         title = fulltext[start_index_title+1:end_index_title]
+
+         #remove cases where fulltext is title
+         if title.find("....") != -1:
+              title = "Titel onbekend"
 
          #clear fulltext
          if fulltext.find("Body") != -1:
