@@ -28,19 +28,19 @@ volkskrant_path = data_path + "\\" + "auteur_volkskrant.csv"
 
 # reset all files
 with open(telegraaf_path, 'w') as filecovr:
-    filecovr.write("titel;auteur;sectie;bladzijde;woorden;datum" + "\n")
+    filecovr.write("titel;auteur;sectie;woorden;datum" + "\n")
     filecovr.close()
 with open(ad_path, 'w') as filecovr:
-    filecovr.write("titel;auteur;sectie;bladzijde;woorden;datum" + "\n")
+    filecovr.write("titel;auteur;sectie;woorden;datum" + "\n")
     filecovr.close()
 with open(trouw_path, 'w') as filecovr:
-    filecovr.write("titel;auteur;sectie;bladzijde;woorden;datum" + "\n")
+    filecovr.write("titel;auteur;sectie;woorden;datum" + "\n")
     filecovr.close()
 with open(volkskrant_path, 'w') as filecovr:
-    filecovr.write("titel;auteur;sectie;bladzijde;woorden;datum" + "\n")
+    filecovr.write("titel;auteur;sectie;woorden;datum" + "\n")
     filecovr.close()
 with open(nrc_path, 'w') as filecovr:
-    filecovr.write("titel;auteur;sectie;bladzijde;woorden;datum" + "\n")
+    filecovr.write("titel;auteur;sectie;woorden;datum" + "\n")
     filecovr.close()
 
 nrcfile = io.open(nrc_path, "a", encoding="utf-8")
@@ -119,6 +119,8 @@ for filename in os.listdir(data_path):
                                    ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("TELEGRAAF") != -1:
+                #remove 1ste editie from data
+                datum = datum.replace(", 1ste editie","")
                 with open(telegraaf_path, 'a') as filecovr:
                     filecovr.write(title + ";" + auteur + ";" + section +
                                    ";" + str(words) + ";" + datum + "\n")
