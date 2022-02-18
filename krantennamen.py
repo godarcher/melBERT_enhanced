@@ -124,13 +124,21 @@ for filename in os.listdir(data_path):
                                    ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("NRC") != -1:
+                #remove 1ste editie from datum
+                datum = datum.replace(", gehele oplage","")
+
+                #remove place names from datum
+                datum = datum.replace(", nederland","")
+                datum = datum.replace(", rotterdam","")
+                datum = datum.replace(", amsterdam","")
+                datum = datum.replace(", den haag","")
+                
                 with open(nrc_path, 'a', encoding="utf-8") as filecovr:
                     filecovr.write(title + ";" + auteur[1:] + ";" + section +
                                    ";" + str(words) + ";" + datum + "\n")
                     filecovr.close()
             elif filename.find("TELEGRAAF") != -1:
-                #remove 1ste editie from data
-                datum = datum.replace(", 1ste editie","")
+                #remove gehele oplage from datum
                 with open(telegraaf_path, 'a') as filecovr:
                     filecovr.write(title + ";" + auteur + ";" + section +
                                    ";" + str(words) + ";" + datum + "\n")
