@@ -107,6 +107,16 @@ for filename in os.listdir(data_path):
             section_end_index = data.find("length") - 2
             section = data[section_index:section_end_index].replace(";","")
 
+            #remove dagaanduiding from datum
+            datum = datum.replace(" maandag","")
+            datum = datum.replace(" dinsdag","")
+            datum = datum.replace(" woensdag","")
+            datum = datum.replace(" donderdag","")
+            datum = datum.replace(" vrijdag","")
+            datum = datum.replace(" zaterdag","")
+            datum = datum.replace(" zondag","")
+            
+
             # check where the krant is from
             if filename.find("AD") != -1:
                 with open(ad_path, 'a') as filecovr:
